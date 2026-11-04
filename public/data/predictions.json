@@ -1,6 +1,6 @@
 {
  "schemaVersion": 1,
- "generatedAt": "2026-11-04T21:59:52+00:00",
+ "generatedAt": "2026-11-04T22:13:22+00:00",
  "season": 2026,
  "nextWeek": 10,
  "nSims": 10000,
@@ -107,14 +107,14 @@
     "color": "#990000",
     "meritRank": 4,
     "committeeRank": 4,
-    "playoff": 0.9805,
-    "bye": 0.6181,
-    "quarterfinal": 0.9041,
-    "semifinal": 0.5305,
-    "final": 0.3001,
-    "champion": 0.1631,
-    "avgSeed": 3.77,
-    "confChampion": 0.3867
+    "playoff": 0.985,
+    "bye": 0.6131,
+    "quarterfinal": 0.9043,
+    "semifinal": 0.529,
+    "final": 0.2952,
+    "champion": 0.1661,
+    "avgSeed": 3.81,
+    "confChampion": 0.3774
    },
    {
     "teamId": 87,
@@ -124,13 +124,13 @@
     "color": "#0c2340",
     "meritRank": 10,
     "committeeRank": 11,
-    "playoff": 0.9762,
-    "bye": 0.4845,
-    "quarterfinal": 0.8683,
-    "semifinal": 0.4847,
-    "final": 0.2666,
-    "champion": 0.1497,
-    "avgSeed": 4.8,
+    "playoff": 0.9774,
+    "bye": 0.4801,
+    "quarterfinal": 0.8648,
+    "semifinal": 0.4895,
+    "final": 0.2705,
+    "champion": 0.1446,
+    "avgSeed": 4.79,
     "confChampion": 0.0
    },
    {
@@ -141,14 +141,14 @@
     "color": "#ba0c2f",
     "meritRank": 12,
     "committeeRank": 2,
-    "playoff": 0.8822,
-    "bye": 0.4252,
-    "quarterfinal": 0.7625,
-    "semifinal": 0.4498,
-    "final": 0.2535,
-    "champion": 0.1432,
-    "avgSeed": 5.08,
-    "confChampion": 0.5304
+    "playoff": 0.8813,
+    "bye": 0.4203,
+    "quarterfinal": 0.7614,
+    "semifinal": 0.4448,
+    "final": 0.2556,
+    "champion": 0.1412,
+    "avgSeed": 5.09,
+    "confChampion": 0.5356
    },
    {
     "teamId": 194,
@@ -158,14 +158,14 @@
     "color": "#ba0c2f",
     "meritRank": 16,
     "committeeRank": 12,
-    "playoff": 0.7465,
-    "bye": 0.2783,
-    "quarterfinal": 0.604,
-    "semifinal": 0.3506,
-    "final": 0.2056,
-    "champion": 0.1108,
-    "avgSeed": 5.87,
-    "confChampion": 0.3727
+    "playoff": 0.7429,
+    "bye": 0.2817,
+    "quarterfinal": 0.5956,
+    "semifinal": 0.3439,
+    "final": 0.1919,
+    "champion": 0.1103,
+    "avgSeed": 5.83,
+    "confChampion": 0.3755
    },
    {
     "teamId": 2390,
@@ -175,14 +175,14 @@
     "color": "#f47321",
     "meritRank": 1,
     "committeeRank": 1,
-    "playoff": 0.9936,
-    "bye": 0.8313,
-    "quarterfinal": 0.9478,
-    "semifinal": 0.4933,
-    "final": 0.2309,
-    "champion": 0.104,
-    "avgSeed": 2.75,
-    "confChampion": 0.693
+    "playoff": 0.9923,
+    "bye": 0.8325,
+    "quarterfinal": 0.9517,
+    "semifinal": 0.4875,
+    "final": 0.2351,
+    "champion": 0.1076,
+    "avgSeed": 2.76,
+    "confChampion": 0.6918
    },
    {
     "teamId": 254,
@@ -192,13 +192,13 @@
     "color": "#be0000",
     "meritRank": 3,
     "committeeRank": 3,
-    "playoff": 0.9755,
-    "bye": 0.75,
-    "quarterfinal": 0.91,
-    "semifinal": 0.4709,
-    "final": 0.2227,
-    "champion": 0.1031,
-    "avgSeed": 3.2,
+    "playoff": 0.9741,
+    "bye": 0.7571,
+    "quarterfinal": 0.912,
+    "semifinal": 0.4699,
+    "final": 0.2215,
+    "champion": 0.1,
+    "avgSeed": 3.18,
     "confChampion": 0.6268
    },
    {
@@ -209,14 +209,14 @@
     "color": "#461d7c",
     "meritRank": 19,
     "committeeRank": 14,
-    "playoff": 0.6151,
-    "bye": 0.1024,
-    "quarterfinal": 0.4765,
-    "semifinal": 0.2595,
-    "final": 0.139,
-    "champion": 0.0721,
-    "avgSeed": 6.79,
-    "confChampion": 0.0843
+    "playoff": 0.6215,
+    "bye": 0.1004,
+    "quarterfinal": 0.4862,
+    "semifinal": 0.2672,
+    "final": 0.1425,
+    "champion": 0.0741,
+    "avgSeed": 6.8,
+    "confChampion": 0.0813
    },
    {
     "teamId": 145,
@@ -226,14 +226,14 @@
     "color": "#13294b",
     "meritRank": 17,
     "committeeRank": 10,
-    "playoff": 0.5311,
-    "bye": 0.0889,
-    "quarterfinal": 0.3421,
-    "semifinal": 0.1771,
-    "final": 0.0901,
-    "champion": 0.0467,
-    "avgSeed": 7.67,
-    "confChampion": 0.1631
+    "playoff": 0.525,
+    "bye": 0.0896,
+    "quarterfinal": 0.3341,
+    "semifinal": 0.173,
+    "final": 0.0902,
+    "champion": 0.0428,
+    "avgSeed": 7.74,
+    "confChampion": 0.1615
    },
    {
     "teamId": 251,
@@ -243,14 +243,14 @@
     "color": "#bf5700",
     "meritRank": 14,
     "committeeRank": 7,
-    "playoff": 0.4931,
-    "bye": 0.0695,
-    "quarterfinal": 0.353,
-    "semifinal": 0.1671,
-    "final": 0.0767,
-    "champion": 0.0339,
-    "avgSeed": 6.94,
-    "confChampion": 0.121
+    "playoff": 0.4866,
+    "bye": 0.0653,
+    "quarterfinal": 0.3435,
+    "semifinal": 0.1634,
+    "final": 0.0778,
+    "champion": 0.0362,
+    "avgSeed": 6.96,
+    "confChampion": 0.1138
    },
    {
     "teamId": 2641,
@@ -260,14 +260,14 @@
     "color": "#c30020",
     "meritRank": 11,
     "committeeRank": 15,
-    "playoff": 0.616,
-    "bye": 0.0805,
-    "quarterfinal": 0.3779,
-    "semifinal": 0.152,
-    "final": 0.0618,
-    "champion": 0.0237,
-    "avgSeed": 7.21,
-    "confChampion": 0.3125
+    "playoff": 0.6186,
+    "bye": 0.0816,
+    "quarterfinal": 0.3755,
+    "semifinal": 0.1564,
+    "final": 0.0653,
+    "champion": 0.0264,
+    "avgSeed": 7.23,
+    "confChampion": 0.3122
    },
    {
     "teamId": 333,
@@ -277,31 +277,31 @@
     "color": "#9e1b32",
     "meritRank": 15,
     "committeeRank": 5,
-    "playoff": 0.5752,
-    "bye": 0.0283,
-    "quarterfinal": 0.2773,
-    "semifinal": 0.1145,
-    "final": 0.0458,
-    "champion": 0.0159,
-    "avgSeed": 8.66,
-    "confChampion": 0.0473
+    "playoff": 0.5796,
+    "bye": 0.0307,
+    "quarterfinal": 0.2843,
+    "semifinal": 0.1237,
+    "final": 0.0506,
+    "champion": 0.0205,
+    "avgSeed": 8.65,
+    "confChampion": 0.0494
    },
    {
-    "teamId": 154,
-    "school": "Wake Forest",
-    "conference": "ACC",
-    "logo": "https://cdn.collegefootballdata.com/logos/500/154.png",
-    "color": "#ceb888",
-    "meritRank": 8,
-    "committeeRank": 16,
-    "playoff": 0.4412,
-    "bye": 0.0584,
-    "quarterfinal": 0.1956,
-    "semifinal": 0.0661,
-    "final": 0.0203,
-    "champion": 0.0077,
-    "avgSeed": 8.3,
-    "confChampion": 0.1883
+    "teamId": 26,
+    "school": "UCLA",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/26.png",
+    "color": "#2774ae",
+    "meritRank": 2,
+    "committeeRank": 8,
+    "playoff": 0.559,
+    "bye": 0.1246,
+    "quarterfinal": 0.3087,
+    "semifinal": 0.0896,
+    "final": 0.0251,
+    "champion": 0.0069,
+    "avgSeed": 6.99,
+    "confChampion": 0.1972
    }
   ],
   "merit": [
@@ -313,14 +313,14 @@
     "color": "#990000",
     "meritRank": 4,
     "committeeRank": 4,
-    "playoff": 0.8666,
-    "bye": 0.3922,
-    "quarterfinal": 0.7468,
-    "semifinal": 0.4878,
-    "final": 0.2941,
-    "champion": 0.1752,
-    "avgSeed": 5.28,
-    "confChampion": 0.3867
+    "playoff": 0.8655,
+    "bye": 0.3913,
+    "quarterfinal": 0.7539,
+    "semifinal": 0.479,
+    "final": 0.2877,
+    "champion": 0.1614,
+    "avgSeed": 5.33,
+    "confChampion": 0.3774
    },
    {
     "teamId": 87,
@@ -330,31 +330,14 @@
     "color": "#0c2340",
     "meritRank": 10,
     "committeeRank": 11,
-    "playoff": 0.8513,
+    "playoff": 0.8543,
     "bye": 0.3804,
-    "quarterfinal": 0.7064,
-    "semifinal": 0.4476,
-    "final": 0.2669,
-    "champion": 0.1487,
+    "quarterfinal": 0.7104,
+    "semifinal": 0.4541,
+    "final": 0.2674,
+    "champion": 0.1526,
     "avgSeed": 6.04,
     "confChampion": 0.0
-   },
-   {
-    "teamId": 2390,
-    "school": "Miami",
-    "conference": "ACC",
-    "logo": "https://cdn.collegefootballdata.com/logos/500/2390.png",
-    "color": "#f47321",
-    "meritRank": 1,
-    "committeeRank": 1,
-    "playoff": 0.9528,
-    "bye": 0.7371,
-    "quarterfinal": 0.9014,
-    "semifinal": 0.5476,
-    "final": 0.2926,
-    "champion": 0.1399,
-    "avgSeed": 2.71,
-    "confChampion": 0.693
    },
    {
     "teamId": 254,
@@ -364,14 +347,31 @@
     "color": "#be0000",
     "meritRank": 3,
     "committeeRank": 3,
-    "playoff": 0.93,
-    "bye": 0.6965,
-    "quarterfinal": 0.8644,
-    "semifinal": 0.5075,
-    "final": 0.2647,
-    "champion": 0.1294,
-    "avgSeed": 3.29,
+    "playoff": 0.9301,
+    "bye": 0.7007,
+    "quarterfinal": 0.8667,
+    "semifinal": 0.5198,
+    "final": 0.2736,
+    "champion": 0.1397,
+    "avgSeed": 3.25,
     "confChampion": 0.6268
+   },
+   {
+    "teamId": 2390,
+    "school": "Miami",
+    "conference": "ACC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2390.png",
+    "color": "#f47321",
+    "meritRank": 1,
+    "committeeRank": 1,
+    "playoff": 0.948,
+    "bye": 0.7374,
+    "quarterfinal": 0.9008,
+    "semifinal": 0.5375,
+    "final": 0.2856,
+    "champion": 0.138,
+    "avgSeed": 2.69,
+    "confChampion": 0.6918
    },
    {
     "teamId": 61,
@@ -381,14 +381,14 @@
     "color": "#ba0c2f",
     "meritRank": 12,
     "committeeRank": 2,
-    "playoff": 0.6338,
-    "bye": 0.2209,
-    "quarterfinal": 0.5442,
-    "semifinal": 0.3478,
-    "final": 0.2112,
-    "champion": 0.1248,
-    "avgSeed": 5.93,
-    "confChampion": 0.5304
+    "playoff": 0.6335,
+    "bye": 0.2213,
+    "quarterfinal": 0.54,
+    "semifinal": 0.3444,
+    "final": 0.2038,
+    "champion": 0.1186,
+    "avgSeed": 5.9,
+    "confChampion": 0.5356
    },
    {
     "teamId": 194,
@@ -398,14 +398,14 @@
     "color": "#ba0c2f",
     "meritRank": 16,
     "committeeRank": 12,
-    "playoff": 0.5317,
-    "bye": 0.247,
-    "quarterfinal": 0.4271,
-    "semifinal": 0.2734,
-    "final": 0.1625,
-    "champion": 0.0932,
-    "avgSeed": 6.56,
-    "confChampion": 0.3727
+    "playoff": 0.53,
+    "bye": 0.2484,
+    "quarterfinal": 0.4281,
+    "semifinal": 0.2762,
+    "final": 0.1686,
+    "champion": 0.0967,
+    "avgSeed": 6.52,
+    "confChampion": 0.3755
    },
    {
     "teamId": 2641,
@@ -415,14 +415,14 @@
     "color": "#c30020",
     "meritRank": 11,
     "committeeRank": 15,
-    "playoff": 0.621,
-    "bye": 0.1957,
-    "quarterfinal": 0.4666,
-    "semifinal": 0.2144,
-    "final": 0.0931,
-    "champion": 0.0371,
-    "avgSeed": 5.99,
-    "confChampion": 0.3125
+    "playoff": 0.6225,
+    "bye": 0.1885,
+    "quarterfinal": 0.465,
+    "semifinal": 0.2184,
+    "final": 0.102,
+    "champion": 0.0391,
+    "avgSeed": 6.03,
+    "confChampion": 0.3122
    },
    {
     "teamId": 99,
@@ -432,14 +432,14 @@
     "color": "#461d7c",
     "meritRank": 19,
     "committeeRank": 14,
-    "playoff": 0.2024,
-    "bye": 0.045,
-    "quarterfinal": 0.1552,
-    "semifinal": 0.091,
-    "final": 0.0532,
-    "champion": 0.0283,
-    "avgSeed": 7.26,
-    "confChampion": 0.0843
+    "playoff": 0.2021,
+    "bye": 0.0428,
+    "quarterfinal": 0.1538,
+    "semifinal": 0.0931,
+    "final": 0.0537,
+    "champion": 0.0294,
+    "avgSeed": 7.34,
+    "confChampion": 0.0813
    },
    {
     "teamId": 2335,
@@ -449,14 +449,14 @@
     "color": "#0a254e",
     "meritRank": 23,
     "committeeRank": null,
-    "playoff": 0.7799,
-    "bye": 0.1388,
-    "quarterfinal": 0.4997,
+    "playoff": 0.784,
+    "bye": 0.1429,
+    "quarterfinal": 0.4915,
     "semifinal": 0.1858,
-    "final": 0.0642,
-    "champion": 0.0227,
-    "avgSeed": 6.69,
-    "confChampion": 0.7835
+    "final": 0.062,
+    "champion": 0.0195,
+    "avgSeed": 6.7,
+    "confChampion": 0.7809
    },
    {
     "teamId": 145,
@@ -466,14 +466,14 @@
     "color": "#13294b",
     "meritRank": 17,
     "committeeRank": 10,
-    "playoff": 0.1363,
-    "bye": 0.0314,
-    "quarterfinal": 0.1083,
-    "semifinal": 0.066,
-    "final": 0.036,
-    "champion": 0.0187,
-    "avgSeed": 6.61,
-    "confChampion": 0.1631
+    "playoff": 0.1324,
+    "bye": 0.0296,
+    "quarterfinal": 0.1054,
+    "semifinal": 0.0614,
+    "final": 0.0336,
+    "champion": 0.0174,
+    "avgSeed": 6.55,
+    "confChampion": 0.1615
    },
    {
     "teamId": 251,
@@ -483,14 +483,14 @@
     "color": "#bf5700",
     "meritRank": 14,
     "committeeRank": 7,
-    "playoff": 0.1987,
-    "bye": 0.0512,
-    "quarterfinal": 0.1316,
-    "semifinal": 0.0726,
-    "final": 0.038,
-    "champion": 0.0166,
+    "playoff": 0.1921,
+    "bye": 0.0506,
+    "quarterfinal": 0.1271,
+    "semifinal": 0.0667,
+    "final": 0.0335,
+    "champion": 0.0169,
     "avgSeed": 8.33,
-    "confChampion": 0.121
+    "confChampion": 0.1138
    },
    {
     "teamId": 26,
@@ -500,14 +500,14 @@
     "color": "#2774ae",
     "meritRank": 2,
     "committeeRank": 8,
-    "playoff": 0.6181,
-    "bye": 0.2431,
-    "quarterfinal": 0.4448,
-    "semifinal": 0.1685,
-    "final": 0.0533,
-    "champion": 0.0154,
-    "avgSeed": 5.55,
-    "confChampion": 0.1934
+    "playoff": 0.624,
+    "bye": 0.244,
+    "quarterfinal": 0.4395,
+    "semifinal": 0.1631,
+    "final": 0.0525,
+    "champion": 0.0153,
+    "avgSeed": 5.58,
+    "confChampion": 0.1972
    }
   ]
  },
@@ -517,85 +517,85 @@
     "seed": 1,
     "teamId": 2390,
     "school": "Miami",
-    "avgSeed": 2.75,
-    "playoff": 0.9936
+    "avgSeed": 2.76,
+    "playoff": 0.9923
    },
    {
     "seed": 2,
     "teamId": 254,
     "school": "Utah",
-    "avgSeed": 3.2,
-    "playoff": 0.9755
+    "avgSeed": 3.18,
+    "playoff": 0.9741
    },
    {
     "seed": 3,
     "teamId": 84,
     "school": "Indiana",
-    "avgSeed": 3.77,
-    "playoff": 0.9805
+    "avgSeed": 3.81,
+    "playoff": 0.985
    },
    {
     "seed": 4,
     "teamId": 87,
     "school": "Notre Dame",
-    "avgSeed": 4.8,
-    "playoff": 0.9762
+    "avgSeed": 4.79,
+    "playoff": 0.9774
    },
    {
     "seed": 5,
     "teamId": 61,
     "school": "Georgia",
-    "avgSeed": 5.08,
-    "playoff": 0.8822
+    "avgSeed": 5.09,
+    "playoff": 0.8813
    },
    {
     "seed": 6,
     "teamId": 194,
     "school": "Ohio State",
-    "avgSeed": 5.87,
-    "playoff": 0.7465
+    "avgSeed": 5.83,
+    "playoff": 0.7429
    },
    {
     "seed": 7,
     "teamId": 99,
     "school": "LSU",
-    "avgSeed": 6.79,
-    "playoff": 0.6151
+    "avgSeed": 6.8,
+    "playoff": 0.6215
    },
    {
     "seed": 8,
     "teamId": 26,
     "school": "UCLA",
-    "avgSeed": 7.03,
-    "playoff": 0.5588
+    "avgSeed": 6.99,
+    "playoff": 0.559
    },
    {
     "seed": 9,
     "teamId": 2641,
     "school": "Texas Tech",
-    "avgSeed": 7.21,
-    "playoff": 0.616
+    "avgSeed": 7.23,
+    "playoff": 0.6186
    },
    {
     "seed": 10,
     "teamId": 145,
     "school": "Ole Miss",
-    "avgSeed": 7.67,
-    "playoff": 0.5311
+    "avgSeed": 7.74,
+    "playoff": 0.525
    },
    {
     "seed": 11,
     "teamId": 333,
     "school": "Alabama",
-    "avgSeed": 8.66,
-    "playoff": 0.5752
+    "avgSeed": 8.65,
+    "playoff": 0.5796
    },
    {
     "seed": 12,
     "teamId": 68,
     "school": "Boise State",
-    "avgSeed": 10.75,
-    "playoff": 0.5756
+    "avgSeed": 10.74,
+    "playoff": 0.5777
    }
   ],
   "merit": [
@@ -603,89 +603,89 @@
     "seed": 1,
     "teamId": 2390,
     "school": "Miami",
-    "avgSeed": 2.71,
-    "playoff": 0.9528
+    "avgSeed": 2.69,
+    "playoff": 0.948
    },
    {
     "seed": 2,
     "teamId": 254,
     "school": "Utah",
-    "avgSeed": 3.29,
-    "playoff": 0.93
+    "avgSeed": 3.25,
+    "playoff": 0.9301
    },
    {
     "seed": 3,
     "teamId": 84,
     "school": "Indiana",
-    "avgSeed": 5.28,
-    "playoff": 0.8666
+    "avgSeed": 5.33,
+    "playoff": 0.8655
    },
    {
     "seed": 4,
     "teamId": 26,
     "school": "UCLA",
-    "avgSeed": 5.55,
-    "playoff": 0.6181
+    "avgSeed": 5.58,
+    "playoff": 0.624
    },
    {
     "seed": 5,
     "teamId": 61,
     "school": "Georgia",
-    "avgSeed": 5.93,
-    "playoff": 0.6338
+    "avgSeed": 5.9,
+    "playoff": 0.6335
    },
    {
     "seed": 6,
     "teamId": 2641,
     "school": "Texas Tech",
-    "avgSeed": 5.99,
-    "playoff": 0.621
+    "avgSeed": 6.03,
+    "playoff": 0.6225
    },
    {
     "seed": 7,
     "teamId": 87,
     "school": "Notre Dame",
     "avgSeed": 6.04,
-    "playoff": 0.8513
+    "playoff": 0.8543
    },
    {
     "seed": 8,
     "teamId": 194,
     "school": "Ohio State",
-    "avgSeed": 6.56,
-    "playoff": 0.5317
+    "avgSeed": 6.52,
+    "playoff": 0.53
    },
    {
     "seed": 9,
     "teamId": 2335,
     "school": "Liberty",
-    "avgSeed": 6.69,
-    "playoff": 0.7799
+    "avgSeed": 6.7,
+    "playoff": 0.784
    },
    {
     "seed": 10,
     "teamId": 167,
     "school": "New Mexico",
-    "avgSeed": 6.84,
-    "playoff": 0.6011
+    "avgSeed": 6.83,
+    "playoff": 0.5994
    },
    {
     "seed": 11,
-    "teamId": 2636,
-    "school": "UTSA",
-    "avgSeed": 7.13,
-    "playoff": 0.4086
+    "teamId": 68,
+    "school": "Boise State",
+    "avgSeed": 7.25,
+    "playoff": 0.7052
    },
    {
     "seed": 12,
-    "teamId": 68,
-    "school": "Boise State",
-    "avgSeed": 7.29,
-    "playoff": 0.7074
+    "teamId": 154,
+    "school": "Wake Forest",
+    "avgSeed": 8.65,
+    "playoff": 0.4039
    }
   ]
  },
- "fieldOverlap": 8.84,
+ "fieldOverlap": 8.82,
  "darkHorse": {
   "teamId": 99,
   "school": "LSU",
@@ -694,10 +694,10 @@
   "color": "#461d7c",
   "meritRank": 19,
   "committeeRank": 14,
-  "titleOdds": 0.0721,
-  "titleOddsMerit": 0.0283,
-  "playoffOdds": 0.6151,
-  "playoffOddsMerit": 0.2024,
+  "titleOdds": 0.0741,
+  "titleOddsMerit": 0.0294,
+  "playoffOdds": 0.6215,
+  "playoffOddsMerit": 0.2021,
   "nextGame": {
    "gameId": 401856740,
    "week": 10,
