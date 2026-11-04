@@ -1,0 +1,69 @@
+name: Retrain models
+
+on:
+  schedule:
+    # 1st of each month during the season, plus August for the preseason refresh.
+    - cron: "0 9 1 1,8,9,10,11,12 *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: predictions
+  cancel-in-progress: false
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: ml
+    env:
+      CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: ml/uv.lock
+
+      # Parity test runs src/lib/meritFormula.ts directly (needs native TS type stripping).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Restore CFBD cache
+        uses: actions/cache@v4
+        with:
+          path: ml/data/raw
+          key: cfbd-raw-${{ github.run_id }}
+          restore-keys: cfbd-raw-
+
+      - name: Refresh data
+        run: uv run cfbml ingest --refresh-current
+
+      - name: Build features
+        run: uv run cfbml features
+
+      - name: Tests
+        run: uv run pytest -q
+
+      # Fails (and commits nothing) if the walk-forward backtest misses its ship gate.
+      - name: Backtest, retrain, and save artifacts
+        run: uv run cfbml train
+
+      - name: Commit artifacts and reports
+        working-directory: .
+        run: |
+          git add ml/artifacts ml/reports
+          if git diff --cached --quiet; then
+            echo "No change."
+            exit 0
+          fi
+          git config user.name "cfb-ml-bot"
+          git config user.email "cfb-ml-bot@users.noreply.github.com"
+          git commit -m "Retrain models $(date -u +%Y-%m-%d)"
+          git push

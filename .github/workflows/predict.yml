@@ -1,0 +1,75 @@
+name: Weekly predictions
+
+on:
+  schedule:
+    # Sunday 16:00 UTC, two hours before the Vercel cron (18:00 UTC) refreshes the site.
+    - cron: "0 16 * 8-12,1 0"
+  workflow_dispatch:
+    inputs:
+      sims:
+        description: "Monte Carlo simulations"
+        default: "10000"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: predictions
+  cancel-in-progress: false
+
+jobs:
+  predict:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ml
+    env:
+      CFBD_API_KEY: ${{ secrets.CFBD_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: ml/uv.lock
+
+      # Finished seasons are cached forever; only the current season is re-pulled.
+      - name: Restore CFBD cache
+        uses: actions/cache@v4
+        with:
+          path: ml/data/raw
+          key: cfbd-raw-${{ github.run_id }}
+          restore-keys: cfbd-raw-
+
+      - name: Refresh current season
+        run: uv run cfbml ingest --refresh-current
+
+      - name: Build features
+        run: uv run cfbml features
+
+      - name: Simulate season and publish
+        run: uv run cfbml predict --sims "${{ inputs.sims || '10000' }}"
+
+      - name: Commit predictions.json
+        working-directory: .
+        run: |
+          if git diff --quiet -- public/data/predictions.json; then
+            echo "No change."
+            exit 0
+          fi
+          git config user.name "cfb-ml-bot"
+          git config user.email "cfb-ml-bot@users.noreply.github.com"
+          git add public/data/predictions.json
+          git commit -m "Weekly predictions $(date -u +%Y-%m-%d)"
+          git push
+
+      # The site reads predictions.json from raw.githubusercontent.com (CDN caches ~5 min).
+      - name: Refresh the site
+        if: ${{ success() }}
+        working-directory: .
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          sleep 330
+          curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://cfb-pure-merit.vercel.app/api/refresh
