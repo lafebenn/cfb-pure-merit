@@ -2,7 +2,9 @@ import RankingsTable from "@/components/RankingsTable";
 import { fetchSeasonData } from "@/lib/cfbd";
 import { calculateMeritRankings, topN } from "@/lib/meritFormula";
 
-export const revalidate = 43200; // 12 hours
+// Runtime render so CFBD_API_KEY from Vercel env is available (not frozen at build).
+// Fetch calls still cache for 12 hours via next.revalidate in lib/cfbd.ts.
+export const dynamic = "force-dynamic";
 
 function formatUpdated(iso: string): string {
   try {
