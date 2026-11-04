@@ -1,0 +1,145 @@
+{
+  "market": [
+    {
+      "era": "2014-20 (pre-NIL)",
+      "games": 5141,
+      "favorite_win_rate": 0.7463528496401478,
+      "upset_rate_fav_7plus": 0.1589486858573217,
+      "mean_abs_error_vs_spread": 12.497714452441159,
+      "market_brier": 0.1680023076662873,
+      "home_margin_minus_line": -0.4823349504323984
+    },
+    {
+      "era": "2021-25 (NIL)",
+      "games": 4446,
+      "favorite_win_rate": 0.7296446243814665,
+      "upset_rate_fav_7plus": 0.16449704142011834,
+      "mean_abs_error_vs_spread": 12.0305330634278,
+      "market_brier": 0.17681264505095,
+      "home_margin_minus_line": 0.18209426627793945
+    }
+  ],
+  "model_by_era": {
+    "2014-20 (pre-NIL)": {
+      "n": 5141,
+      "brier": 0.17453058344757752,
+      "log_loss": 0.5190111859842521,
+      "accuracy": 0.7352655125461972,
+      "margin_rmse": 16.483520522259223
+    },
+    "2021-25 (NIL)": {
+      "n": 4446,
+      "brier": 0.18789617561250027,
+      "log_loss": 0.5527525645953867,
+      "accuracy": 0.7076023391812866,
+      "margin_rmse": 16.083643787680078
+    }
+  },
+  "persistence": [
+    {
+      "season": 2014,
+      "sp_corr_with_last_year": 0.8794861598773283
+    },
+    {
+      "season": 2015,
+      "sp_corr_with_last_year": 0.8252451246121641
+    },
+    {
+      "season": 2016,
+      "sp_corr_with_last_year": 0.8604461965209437
+    },
+    {
+      "season": 2017,
+      "sp_corr_with_last_year": 0.8093221749234534
+    },
+    {
+      "season": 2018,
+      "sp_corr_with_last_year": 0.8337765343987636
+    },
+    {
+      "season": 2019,
+      "sp_corr_with_last_year": 0.7806700770902955
+    },
+    {
+      "season": 2020,
+      "sp_corr_with_last_year": 0.8229829180576878
+    },
+    {
+      "season": 2021,
+      "sp_corr_with_last_year": 0.7601019869281596
+    },
+    {
+      "season": 2022,
+      "sp_corr_with_last_year": 0.7453899624539718
+    },
+    {
+      "season": 2023,
+      "sp_corr_with_last_year": 0.8003181612920416
+    },
+    {
+      "season": 2024,
+      "sp_corr_with_last_year": 0.7529409469243138
+    },
+    {
+      "season": 2025,
+      "sp_corr_with_last_year": 0.7435592749753451
+    },
+    {
+      "season": 2026,
+      "sp_corr_with_last_year": 0.774945257514049
+    }
+  ],
+  "recency": {
+    "unweighted": {
+      "full": {
+        "n": 1606,
+        "brier": 0.17996696621137556,
+        "log_loss": 0.5299902543261664,
+        "accuracy": 0.7141967621419676
+      },
+      "nomarket": {
+        "n": 1606,
+        "brier": 0.18859960193144226,
+        "log_loss": 0.5533892915043381,
+        "accuracy": 0.6986301369863014
+      }
+    },
+    "decay_0.85": {
+      "full": {
+        "n": 1606,
+        "brier": 0.17933910593322783,
+        "log_loss": 0.5288035402345013,
+        "accuracy": 0.7229140722291407
+      },
+      "nomarket": {
+        "n": 1606,
+        "brier": 0.18768997813272528,
+        "log_loss": 0.5516276480217585,
+        "accuracy": 0.7067247820672479
+      }
+    },
+    "decay_0.70": {
+      "full": {
+        "n": 1606,
+        "brier": 0.18016813920315106,
+        "log_loss": 0.5315815557735263,
+        "accuracy": 0.7204234122042341
+      },
+      "nomarket": {
+        "n": 1606,
+        "brier": 0.18766133835270593,
+        "log_loss": 0.5511726393582839,
+        "accuracy": 0.7054794520547946
+      }
+    }
+  },
+  "best_recency": "decay_0.85",
+  "experience_gain_share": {
+    "pre": 0.10035787064143256,
+    "post": 0.12709544690618554
+  },
+  "coach_gain_share": {
+    "pre": 0.07600004550625665,
+    "post": 0.07420981018061645
+  }
+}

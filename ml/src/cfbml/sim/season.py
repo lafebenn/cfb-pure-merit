@@ -21,7 +21,7 @@ from cfbml.merit import MeritGame, merit_rankings
 from cfbml.models.committee import FEATURES as COMMITTEE_FEATURES
 from cfbml.models.committee import add_derived, brand_table
 from cfbml.models.game import GameModel
-from cfbml.sim.conferences import championship_games
+from cfbml.sim.conferences import championship_games, champions
 
 # First round: (higher seed, lower seed); quarterfinal byes face these winners in order.
 FIRST_ROUND = [(5, 12), (6, 11), (7, 10), (8, 9)]
@@ -44,6 +44,7 @@ class SeasonContext:
     p_conf_champ: np.ndarray
     sigma: float
     committee_static: pd.DataFrame
+    decided_champions: dict[str, int]  # conference -> champion, for title games already played
 
 
 def _team_snapshot(gf: pd.DataFrame) -> pd.DataFrame:
@@ -104,9 +105,11 @@ def load_context(season: int) -> SeasonContext:
     gf["kickoff"] = pd.to_datetime(gf.start_date, utc=True)
     reg = gf[gf.season_type == "regular"]
 
-    # Title games aren't scheduled until matchups are set; drop any placeholder rows.
-    cg_ids = set(championship_games(load_table("games")).query("season == @season").game_id)
-    done = reg[reg.completed & ~reg.game_id.isin(cg_ids)].dropna(subset=["home_points"])
+    # Played title games stay as real results; unplayed placeholders are re-simulated.
+    cg = championship_games(load_table("games")).query("season == @season")
+    cg_ids = set(cg.game_id)
+    decided = {r.conference: int(r.team_id) for r in champions(cg).itertuples(index=False)}
+    done = reg[reg.completed].dropna(subset=["home_points"])
     completed = [MeritGame(int(r.home_id), int(r.away_id), float(r.home_points),
                            float(r.away_points), bool(r.neutral_site), int(r.week),
                            str(r.start_date)) for r in done.itertuples(index=False)]
@@ -144,15 +147,17 @@ def load_context(season: int) -> SeasonContext:
     conf_done = done[done.conference_game.astype(bool)
                      & (done.home_id.map(teams.set_index("team_id").conference)
                         == done.away_id.map(teams.set_index("team_id").conference))]
+    conf_done = conf_done[~conf_done.game_id.isin(cg_ids)]
     return SeasonContext(season, teams, idx, completed, rem, conf_done, champ_week, snap,
-                         sigma=nomkt.sigma, committee_static=static, **ctx_mats)
+                         sigma=nomkt.sigma, committee_static=static,
+                         decided_champions=decided, **ctx_mats)
 
 
 def _conference_layout(ctx: SeasonContext) -> list[tuple[str, list[list[int]]]]:
     """[(conference, [division members...])]; a single pool when there are no divisions."""
     out = []
     for conf, members in ctx.teams.groupby("conference"):
-        if conf == "FBS Independents" or len(members) < 4:
+        if conf == "FBS Independents" or len(members) < 4 or conf in ctx.decided_champions:
             continue
         if members.division.notna().any():
             pools = [g.team_id.tolist() for _, g in members.groupby("division")]
@@ -274,7 +279,7 @@ def simulate(ctx: SeasonContext, n_sims: int = 10_000, seed: int = 2026,
             games.extend(MeritGame(int(rem_h[j]), int(rem_a[j]), float(hp[s, j]),
                                    float(ap[s, j]), bool(rem_neu[j]), int(rem_wk[j]))
                          for j in range(G))
-            champs: set[int] = set()
+            champs: set[int] = set(ctx.decided_champions.values())
             for a, b in _title_matchups(layout, conf_wl, all_wl, elo, idx, h2h):
                 a_wins = rng.random() < ctx.p_conf_champ[idx[a], idx[b]]
                 m = max(1.0, abs(rng.normal(0.0, ctx.sigma)))
