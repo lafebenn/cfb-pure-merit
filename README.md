@@ -48,7 +48,7 @@ Open [http://localhost:3000](http://localhost:3000).
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/lafebenn/cfb-pure-merit&env=CFBD_API_KEY&envDescription=Free%20API%20key%20from%20collegefootballdata.com/key&project-name=cfb-pure-merit)
 
 1. Import `lafebenn/cfb-pure-merit` (or click Deploy).
-2. Set `CFBD_API_KEY`. Optionally set `CRON_SECRET` to protect `/api/refresh`.
+2. Set `CFBD_API_KEY` and `CRON_SECRET`. Vercel Cron sends `CRON_SECRET` as a Bearer token, and `/api/refresh` rejects everything else in production.
 3. Deploy. `vercel.json` registers a Sunday cron that calls `/api/refresh` to bust the CFBD cache.
 
 CLI:
@@ -59,13 +59,25 @@ npx vercel --prod
 
 Manual refresh: `curl -H "Authorization: Bearer $CRON_SECRET" https://your-app.vercel.app/api/refresh`
 
-## Future: ML playoff projections
+## ML predictions (`ml/`)
 
-Out of scope for v1. Planned later:
+A Python layer that publishes `public/data/predictions.json` every Sunday. The site reads it from GitHub and hides the panels if it is missing or more than 10 days old.
 
-- Predict weekly W/L and season outcomes
-- Playoff qualification odds
-- Counterfactuals: how odds shift given a win or loss in a given week
+- **Game model:** LightGBM margin regression plus isotonic win %. Inputs are as of kickoff: opponent-adjusted EPA and success rate, Elo, prior SP+, closing line, coach résumé, and roster experience/portal. No conference or brand.
+- **Committee emulator:** LambdaRank on every CFP committee ranking since 2014. It does see conference and brand, on purpose.
+- **Simulator:** 10k runs of the remaining schedule, then conference title games, then two brackets. *Real CFP* uses 5 auto-bid champions and is seeded by the emulator. *Pure Merit* is the top 12 of this board.
+- **Splits:** train 2014–21, validate 2022–23, test 2024–25 (walk-forward). Results are in `ml/reports/` (`game_backtest.json`, `committee_backtest.json`, `nil_era.md`).
+
+```bash
+cd ml
+uv run cfbml ingest --refresh-current   # cached CFBD backfill 2013→now (~150 calls cold, ~10 weekly)
+uv run cfbml features                   # as-of-kickoff feature table
+uv run cfbml train                      # backtest ship gate, then retrain game + committee models
+uv run cfbml predict                    # simulate + write public/data/predictions.json
+uv run pytest -q                        # TS parity, no-leakage, bracket invariants
+```
+
+Automation: `.github/workflows/predict.yml` (Sundays 16:00 UTC, Aug–Jan) and `retrain.yml` (1st of the month). Both need repo secrets `CFBD_API_KEY` and `CRON_SECRET`. The same `CRON_SECRET` must be set on Vercel.
 
 ## Disclaimer
 
