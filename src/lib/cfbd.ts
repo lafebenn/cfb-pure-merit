@@ -10,6 +10,8 @@ export interface CfbdTeam {
   abbreviation: string | null;
   conference: string | null;
   classification: CfbdClassification | null;
+  color?: string | null;
+  alt_color?: string | null;
   logos: string[] | null;
 }
 
@@ -45,6 +47,15 @@ export interface CfbdRecord {
   };
 }
 
+export interface CfbdSeasonData {
+  season: number;
+  fetchedAt: string;
+  teams: CfbdTeam[];
+  fbsTeamIds: number[];
+  games: CfbdGame[];
+  records: CfbdRecord[];
+}
+
 function getApiKey(): string {
   const key = process.env.CFBD_API_KEY;
   if (!key) {
@@ -55,7 +66,10 @@ function getApiKey(): string {
   return key;
 }
 
-async function cfbdFetch<T>(path: string, params: Record<string, string | number>): Promise<T> {
+async function cfbdFetch<T>(
+  path: string,
+  params: Record<string, string | number> = {},
+): Promise<T> {
   const url = new URL(`${CFBD_BASE}${path}`);
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, String(value));
@@ -84,41 +98,35 @@ export function currentCfbdSeason(now = new Date()): number {
   return month >= 6 ? year : year - 1;
 }
 
-export async function fetchTeams(): Promise<CfbdTeam[]> {
-  return cfbdFetch<CfbdTeam[]>("/teams", {});
-}
-
-export async function fetchGames(year: number): Promise<CfbdGame[]> {
-  return cfbdFetch<CfbdGame[]>("/games", {
-    year,
-    seasonType: "regular",
-  });
-}
-
-export async function fetchRecords(year: number): Promise<CfbdRecord[]> {
-  return cfbdFetch<CfbdRecord[]>("/records", { year });
-}
-
-export interface CfbdSeasonData {
-  season: number;
-  fetchedAt: string;
-  teams: CfbdTeam[];
-  games: CfbdGame[];
-  records: CfbdRecord[];
-}
-
 export async function fetchSeasonData(season?: number): Promise<CfbdSeasonData> {
   const year = season ?? currentCfbdSeason();
-  const [teams, games, records] = await Promise.all([
-    fetchTeams(),
-    fetchGames(year),
-    fetchRecords(year),
+  const [teams, fbsTeams, games, records] = await Promise.all([
+    cfbdFetch<CfbdTeam[]>("/teams", { year }),
+    cfbdFetch<CfbdTeam[]>("/teams/fbs", { year }),
+    cfbdFetch<CfbdGame[]>("/games", { year, seasonType: "regular" }),
+    cfbdFetch<CfbdRecord[]>("/records", { year }),
   ]);
+
+  // Prefer FBS endpoint logos/colors when present
+  const fbsById = new Map(fbsTeams.map((t) => [t.id, t]));
+  const mergedTeams = teams.map((t) => {
+    const fbs = fbsById.get(t.id);
+    if (!fbs) return t;
+    return {
+      ...t,
+      classification: "fbs",
+      logos: fbs.logos?.length ? fbs.logos : t.logos,
+      color: fbs.color ?? t.color,
+      alt_color: fbs.alt_color ?? t.alt_color,
+      conference: fbs.conference ?? t.conference,
+    };
+  });
 
   return {
     season: year,
     fetchedAt: new Date().toISOString(),
-    teams,
+    teams: mergedTeams,
+    fbsTeamIds: fbsTeams.map((t) => t.id),
     games,
     records,
   };
