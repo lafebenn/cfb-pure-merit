@@ -1,0 +1,758 @@
+{
+ "schemaVersion": 1,
+ "generatedAt": "2026-11-04T21:59:52+00:00",
+ "season": 2026,
+ "nextWeek": 10,
+ "nSims": 10000,
+ "remainingGames": 259,
+ "upsetAlerts": [
+  {
+   "gameId": 401856741,
+   "week": 10,
+   "kickoff": "2026-11-08T00:30:00.000Z",
+   "neutralSite": false,
+   "homeTeamId": 145,
+   "favorite": {
+    "teamId": 61,
+    "school": "Georgia",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/61.png",
+    "color": "#ba0c2f",
+    "meritRank": 12,
+    "committeeRank": 2
+   },
+   "underdog": {
+    "teamId": 145,
+    "school": "Ole Miss",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/145.png",
+    "color": "#13294b",
+    "meritRank": 17,
+    "committeeRank": 10
+   },
+   "underdogWinProb": 0.5317,
+   "marketUnderdogWinProb": 0.4149,
+   "spread": 3.5,
+   "model": "full",
+   "score": 0.5104
+  },
+  {
+   "gameId": 401858512,
+   "week": 10,
+   "kickoff": "2026-11-07T17:00:00.000Z",
+   "neutralSite": false,
+   "homeTeamId": 135,
+   "favorite": {
+    "teamId": 26,
+    "school": "UCLA",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/26.png",
+    "color": "#2774ae",
+    "meritRank": 2,
+    "committeeRank": 8
+   },
+   "underdog": {
+    "teamId": 135,
+    "school": "Minnesota",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/135.png",
+    "color": "#7a0019",
+    "meritRank": 57,
+    "committeeRank": null
+   },
+   "underdogWinProb": 0.393,
+   "marketUnderdogWinProb": 0.3677,
+   "spread": 5.5,
+   "model": "full",
+   "score": 0.3772
+  },
+  {
+   "gameId": 401856743,
+   "week": 10,
+   "kickoff": "2026-11-07T17:00:00.000Z",
+   "neutralSite": false,
+   "homeTeamId": 142,
+   "favorite": {
+    "teamId": 251,
+    "school": "Texas",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/251.png",
+    "color": "#bf5700",
+    "meritRank": 14,
+    "committeeRank": 7
+   },
+   "underdog": {
+    "teamId": 142,
+    "school": "Missouri",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/142.png",
+    "color": "#f1b82d",
+    "meritRank": 25,
+    "committeeRank": 18
+   },
+   "underdogWinProb": 0.3978,
+   "marketUnderdogWinProb": 0.439,
+   "spread": 2.5,
+   "model": "full",
+   "score": 0.3023
+  }
+ ],
+ "titleOdds": {
+  "real": [
+   {
+    "teamId": 84,
+    "school": "Indiana",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/84.png",
+    "color": "#990000",
+    "meritRank": 4,
+    "committeeRank": 4,
+    "playoff": 0.9805,
+    "bye": 0.6181,
+    "quarterfinal": 0.9041,
+    "semifinal": 0.5305,
+    "final": 0.3001,
+    "champion": 0.1631,
+    "avgSeed": 3.77,
+    "confChampion": 0.3867
+   },
+   {
+    "teamId": 87,
+    "school": "Notre Dame",
+    "conference": "FBS Independents",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/87.png",
+    "color": "#0c2340",
+    "meritRank": 10,
+    "committeeRank": 11,
+    "playoff": 0.9762,
+    "bye": 0.4845,
+    "quarterfinal": 0.8683,
+    "semifinal": 0.4847,
+    "final": 0.2666,
+    "champion": 0.1497,
+    "avgSeed": 4.8,
+    "confChampion": 0.0
+   },
+   {
+    "teamId": 61,
+    "school": "Georgia",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/61.png",
+    "color": "#ba0c2f",
+    "meritRank": 12,
+    "committeeRank": 2,
+    "playoff": 0.8822,
+    "bye": 0.4252,
+    "quarterfinal": 0.7625,
+    "semifinal": 0.4498,
+    "final": 0.2535,
+    "champion": 0.1432,
+    "avgSeed": 5.08,
+    "confChampion": 0.5304
+   },
+   {
+    "teamId": 194,
+    "school": "Ohio State",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/194.png",
+    "color": "#ba0c2f",
+    "meritRank": 16,
+    "committeeRank": 12,
+    "playoff": 0.7465,
+    "bye": 0.2783,
+    "quarterfinal": 0.604,
+    "semifinal": 0.3506,
+    "final": 0.2056,
+    "champion": 0.1108,
+    "avgSeed": 5.87,
+    "confChampion": 0.3727
+   },
+   {
+    "teamId": 2390,
+    "school": "Miami",
+    "conference": "ACC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2390.png",
+    "color": "#f47321",
+    "meritRank": 1,
+    "committeeRank": 1,
+    "playoff": 0.9936,
+    "bye": 0.8313,
+    "quarterfinal": 0.9478,
+    "semifinal": 0.4933,
+    "final": 0.2309,
+    "champion": 0.104,
+    "avgSeed": 2.75,
+    "confChampion": 0.693
+   },
+   {
+    "teamId": 254,
+    "school": "Utah",
+    "conference": "Big 12",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/254.png",
+    "color": "#be0000",
+    "meritRank": 3,
+    "committeeRank": 3,
+    "playoff": 0.9755,
+    "bye": 0.75,
+    "quarterfinal": 0.91,
+    "semifinal": 0.4709,
+    "final": 0.2227,
+    "champion": 0.1031,
+    "avgSeed": 3.2,
+    "confChampion": 0.6268
+   },
+   {
+    "teamId": 99,
+    "school": "LSU",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/99.png",
+    "color": "#461d7c",
+    "meritRank": 19,
+    "committeeRank": 14,
+    "playoff": 0.6151,
+    "bye": 0.1024,
+    "quarterfinal": 0.4765,
+    "semifinal": 0.2595,
+    "final": 0.139,
+    "champion": 0.0721,
+    "avgSeed": 6.79,
+    "confChampion": 0.0843
+   },
+   {
+    "teamId": 145,
+    "school": "Ole Miss",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/145.png",
+    "color": "#13294b",
+    "meritRank": 17,
+    "committeeRank": 10,
+    "playoff": 0.5311,
+    "bye": 0.0889,
+    "quarterfinal": 0.3421,
+    "semifinal": 0.1771,
+    "final": 0.0901,
+    "champion": 0.0467,
+    "avgSeed": 7.67,
+    "confChampion": 0.1631
+   },
+   {
+    "teamId": 251,
+    "school": "Texas",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/251.png",
+    "color": "#bf5700",
+    "meritRank": 14,
+    "committeeRank": 7,
+    "playoff": 0.4931,
+    "bye": 0.0695,
+    "quarterfinal": 0.353,
+    "semifinal": 0.1671,
+    "final": 0.0767,
+    "champion": 0.0339,
+    "avgSeed": 6.94,
+    "confChampion": 0.121
+   },
+   {
+    "teamId": 2641,
+    "school": "Texas Tech",
+    "conference": "Big 12",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2641.png",
+    "color": "#c30020",
+    "meritRank": 11,
+    "committeeRank": 15,
+    "playoff": 0.616,
+    "bye": 0.0805,
+    "quarterfinal": 0.3779,
+    "semifinal": 0.152,
+    "final": 0.0618,
+    "champion": 0.0237,
+    "avgSeed": 7.21,
+    "confChampion": 0.3125
+   },
+   {
+    "teamId": 333,
+    "school": "Alabama",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/333.png",
+    "color": "#9e1b32",
+    "meritRank": 15,
+    "committeeRank": 5,
+    "playoff": 0.5752,
+    "bye": 0.0283,
+    "quarterfinal": 0.2773,
+    "semifinal": 0.1145,
+    "final": 0.0458,
+    "champion": 0.0159,
+    "avgSeed": 8.66,
+    "confChampion": 0.0473
+   },
+   {
+    "teamId": 154,
+    "school": "Wake Forest",
+    "conference": "ACC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/154.png",
+    "color": "#ceb888",
+    "meritRank": 8,
+    "committeeRank": 16,
+    "playoff": 0.4412,
+    "bye": 0.0584,
+    "quarterfinal": 0.1956,
+    "semifinal": 0.0661,
+    "final": 0.0203,
+    "champion": 0.0077,
+    "avgSeed": 8.3,
+    "confChampion": 0.1883
+   }
+  ],
+  "merit": [
+   {
+    "teamId": 84,
+    "school": "Indiana",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/84.png",
+    "color": "#990000",
+    "meritRank": 4,
+    "committeeRank": 4,
+    "playoff": 0.8666,
+    "bye": 0.3922,
+    "quarterfinal": 0.7468,
+    "semifinal": 0.4878,
+    "final": 0.2941,
+    "champion": 0.1752,
+    "avgSeed": 5.28,
+    "confChampion": 0.3867
+   },
+   {
+    "teamId": 87,
+    "school": "Notre Dame",
+    "conference": "FBS Independents",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/87.png",
+    "color": "#0c2340",
+    "meritRank": 10,
+    "committeeRank": 11,
+    "playoff": 0.8513,
+    "bye": 0.3804,
+    "quarterfinal": 0.7064,
+    "semifinal": 0.4476,
+    "final": 0.2669,
+    "champion": 0.1487,
+    "avgSeed": 6.04,
+    "confChampion": 0.0
+   },
+   {
+    "teamId": 2390,
+    "school": "Miami",
+    "conference": "ACC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2390.png",
+    "color": "#f47321",
+    "meritRank": 1,
+    "committeeRank": 1,
+    "playoff": 0.9528,
+    "bye": 0.7371,
+    "quarterfinal": 0.9014,
+    "semifinal": 0.5476,
+    "final": 0.2926,
+    "champion": 0.1399,
+    "avgSeed": 2.71,
+    "confChampion": 0.693
+   },
+   {
+    "teamId": 254,
+    "school": "Utah",
+    "conference": "Big 12",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/254.png",
+    "color": "#be0000",
+    "meritRank": 3,
+    "committeeRank": 3,
+    "playoff": 0.93,
+    "bye": 0.6965,
+    "quarterfinal": 0.8644,
+    "semifinal": 0.5075,
+    "final": 0.2647,
+    "champion": 0.1294,
+    "avgSeed": 3.29,
+    "confChampion": 0.6268
+   },
+   {
+    "teamId": 61,
+    "school": "Georgia",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/61.png",
+    "color": "#ba0c2f",
+    "meritRank": 12,
+    "committeeRank": 2,
+    "playoff": 0.6338,
+    "bye": 0.2209,
+    "quarterfinal": 0.5442,
+    "semifinal": 0.3478,
+    "final": 0.2112,
+    "champion": 0.1248,
+    "avgSeed": 5.93,
+    "confChampion": 0.5304
+   },
+   {
+    "teamId": 194,
+    "school": "Ohio State",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/194.png",
+    "color": "#ba0c2f",
+    "meritRank": 16,
+    "committeeRank": 12,
+    "playoff": 0.5317,
+    "bye": 0.247,
+    "quarterfinal": 0.4271,
+    "semifinal": 0.2734,
+    "final": 0.1625,
+    "champion": 0.0932,
+    "avgSeed": 6.56,
+    "confChampion": 0.3727
+   },
+   {
+    "teamId": 2641,
+    "school": "Texas Tech",
+    "conference": "Big 12",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2641.png",
+    "color": "#c30020",
+    "meritRank": 11,
+    "committeeRank": 15,
+    "playoff": 0.621,
+    "bye": 0.1957,
+    "quarterfinal": 0.4666,
+    "semifinal": 0.2144,
+    "final": 0.0931,
+    "champion": 0.0371,
+    "avgSeed": 5.99,
+    "confChampion": 0.3125
+   },
+   {
+    "teamId": 99,
+    "school": "LSU",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/99.png",
+    "color": "#461d7c",
+    "meritRank": 19,
+    "committeeRank": 14,
+    "playoff": 0.2024,
+    "bye": 0.045,
+    "quarterfinal": 0.1552,
+    "semifinal": 0.091,
+    "final": 0.0532,
+    "champion": 0.0283,
+    "avgSeed": 7.26,
+    "confChampion": 0.0843
+   },
+   {
+    "teamId": 2335,
+    "school": "Liberty",
+    "conference": "Conference USA",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2335.png",
+    "color": "#0a254e",
+    "meritRank": 23,
+    "committeeRank": null,
+    "playoff": 0.7799,
+    "bye": 0.1388,
+    "quarterfinal": 0.4997,
+    "semifinal": 0.1858,
+    "final": 0.0642,
+    "champion": 0.0227,
+    "avgSeed": 6.69,
+    "confChampion": 0.7835
+   },
+   {
+    "teamId": 145,
+    "school": "Ole Miss",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/145.png",
+    "color": "#13294b",
+    "meritRank": 17,
+    "committeeRank": 10,
+    "playoff": 0.1363,
+    "bye": 0.0314,
+    "quarterfinal": 0.1083,
+    "semifinal": 0.066,
+    "final": 0.036,
+    "champion": 0.0187,
+    "avgSeed": 6.61,
+    "confChampion": 0.1631
+   },
+   {
+    "teamId": 251,
+    "school": "Texas",
+    "conference": "SEC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/251.png",
+    "color": "#bf5700",
+    "meritRank": 14,
+    "committeeRank": 7,
+    "playoff": 0.1987,
+    "bye": 0.0512,
+    "quarterfinal": 0.1316,
+    "semifinal": 0.0726,
+    "final": 0.038,
+    "champion": 0.0166,
+    "avgSeed": 8.33,
+    "confChampion": 0.121
+   },
+   {
+    "teamId": 26,
+    "school": "UCLA",
+    "conference": "Big Ten",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/26.png",
+    "color": "#2774ae",
+    "meritRank": 2,
+    "committeeRank": 8,
+    "playoff": 0.6181,
+    "bye": 0.2431,
+    "quarterfinal": 0.4448,
+    "semifinal": 0.1685,
+    "final": 0.0533,
+    "champion": 0.0154,
+    "avgSeed": 5.55,
+    "confChampion": 0.1934
+   }
+  ]
+ },
+ "projectedField": {
+  "real": [
+   {
+    "seed": 1,
+    "teamId": 2390,
+    "school": "Miami",
+    "avgSeed": 2.75,
+    "playoff": 0.9936
+   },
+   {
+    "seed": 2,
+    "teamId": 254,
+    "school": "Utah",
+    "avgSeed": 3.2,
+    "playoff": 0.9755
+   },
+   {
+    "seed": 3,
+    "teamId": 84,
+    "school": "Indiana",
+    "avgSeed": 3.77,
+    "playoff": 0.9805
+   },
+   {
+    "seed": 4,
+    "teamId": 87,
+    "school": "Notre Dame",
+    "avgSeed": 4.8,
+    "playoff": 0.9762
+   },
+   {
+    "seed": 5,
+    "teamId": 61,
+    "school": "Georgia",
+    "avgSeed": 5.08,
+    "playoff": 0.8822
+   },
+   {
+    "seed": 6,
+    "teamId": 194,
+    "school": "Ohio State",
+    "avgSeed": 5.87,
+    "playoff": 0.7465
+   },
+   {
+    "seed": 7,
+    "teamId": 99,
+    "school": "LSU",
+    "avgSeed": 6.79,
+    "playoff": 0.6151
+   },
+   {
+    "seed": 8,
+    "teamId": 26,
+    "school": "UCLA",
+    "avgSeed": 7.03,
+    "playoff": 0.5588
+   },
+   {
+    "seed": 9,
+    "teamId": 2641,
+    "school": "Texas Tech",
+    "avgSeed": 7.21,
+    "playoff": 0.616
+   },
+   {
+    "seed": 10,
+    "teamId": 145,
+    "school": "Ole Miss",
+    "avgSeed": 7.67,
+    "playoff": 0.5311
+   },
+   {
+    "seed": 11,
+    "teamId": 333,
+    "school": "Alabama",
+    "avgSeed": 8.66,
+    "playoff": 0.5752
+   },
+   {
+    "seed": 12,
+    "teamId": 68,
+    "school": "Boise State",
+    "avgSeed": 10.75,
+    "playoff": 0.5756
+   }
+  ],
+  "merit": [
+   {
+    "seed": 1,
+    "teamId": 2390,
+    "school": "Miami",
+    "avgSeed": 2.71,
+    "playoff": 0.9528
+   },
+   {
+    "seed": 2,
+    "teamId": 254,
+    "school": "Utah",
+    "avgSeed": 3.29,
+    "playoff": 0.93
+   },
+   {
+    "seed": 3,
+    "teamId": 84,
+    "school": "Indiana",
+    "avgSeed": 5.28,
+    "playoff": 0.8666
+   },
+   {
+    "seed": 4,
+    "teamId": 26,
+    "school": "UCLA",
+    "avgSeed": 5.55,
+    "playoff": 0.6181
+   },
+   {
+    "seed": 5,
+    "teamId": 61,
+    "school": "Georgia",
+    "avgSeed": 5.93,
+    "playoff": 0.6338
+   },
+   {
+    "seed": 6,
+    "teamId": 2641,
+    "school": "Texas Tech",
+    "avgSeed": 5.99,
+    "playoff": 0.621
+   },
+   {
+    "seed": 7,
+    "teamId": 87,
+    "school": "Notre Dame",
+    "avgSeed": 6.04,
+    "playoff": 0.8513
+   },
+   {
+    "seed": 8,
+    "teamId": 194,
+    "school": "Ohio State",
+    "avgSeed": 6.56,
+    "playoff": 0.5317
+   },
+   {
+    "seed": 9,
+    "teamId": 2335,
+    "school": "Liberty",
+    "avgSeed": 6.69,
+    "playoff": 0.7799
+   },
+   {
+    "seed": 10,
+    "teamId": 167,
+    "school": "New Mexico",
+    "avgSeed": 6.84,
+    "playoff": 0.6011
+   },
+   {
+    "seed": 11,
+    "teamId": 2636,
+    "school": "UTSA",
+    "avgSeed": 7.13,
+    "playoff": 0.4086
+   },
+   {
+    "seed": 12,
+    "teamId": 68,
+    "school": "Boise State",
+    "avgSeed": 7.29,
+    "playoff": 0.7074
+   }
+  ]
+ },
+ "fieldOverlap": 8.84,
+ "darkHorse": {
+  "teamId": 99,
+  "school": "LSU",
+  "conference": "SEC",
+  "logo": "https://cdn.collegefootballdata.com/logos/500/99.png",
+  "color": "#461d7c",
+  "meritRank": 19,
+  "committeeRank": 14,
+  "titleOdds": 0.0721,
+  "titleOddsMerit": 0.0283,
+  "playoffOdds": 0.6151,
+  "playoffOddsMerit": 0.2024,
+  "nextGame": {
+   "gameId": 401856740,
+   "week": 10,
+   "opponent": "Alabama",
+   "home": true,
+   "winProb": 0.7346,
+   "marketWinProb": 0.6323,
+   "edge": 0.1023
+  }
+ },
+ "models": {
+  "game_backtest": {
+   "pooled": {
+    "elo": {
+     "n": 1606,
+     "brier": 0.18953913368549208,
+     "log_loss": 0.5556114262547628,
+     "accuracy": 0.6998754669987547
+    },
+    "market": {
+     "n": 1606,
+     "brier": 0.17863435929332222,
+     "log_loss": 0.5270714402904574,
+     "accuracy": 0.7222914072229141
+    },
+    "full": {
+     "n": 1606,
+     "brier": 0.17933910593322783,
+     "log_loss": 0.5288035402345013,
+     "accuracy": 0.7229140722291407
+    },
+    "nomarket": {
+     "n": 1606,
+     "brier": 0.18768997813272528,
+     "log_loss": 0.5516276480217585,
+     "accuracy": 0.7067247820672479
+    },
+    "nomarket_ats": 0.5011468651004984
+   },
+   "shipGate": {
+    "full_beats_elo_brier": true,
+    "full_within_1pct_market_logloss": true,
+    "nomarket_beats_elo_brier": true
+   }
+  },
+  "committee_backtest": {
+   "pooled": {
+    "spearman_top25": 0.9274358974358973,
+    "top12_overlap": 10.75,
+    "top4_overlap": 3.333333333333333,
+    "final_week_top12_overlap": 11.5
+   },
+   "shipGate": {
+    "top12_overlap_ge_10": true
+   }
+  }
+ }
+}
