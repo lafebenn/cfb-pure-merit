@@ -42,10 +42,18 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Deploy (Vercel)
 
-1. Push this repo to GitHub.
-2. Import the project in [Vercel](https://vercel.com).
-3. Set `CFBD_API_KEY` in Project → Settings → Environment Variables.
-4. Deploy. Revalidation keeps rankings fresh about every 12 hours.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/lafebenn/cfb-pure-merit&env=CFBD_API_KEY&envDescription=Free%20API%20key%20from%20collegefootballdata.com/key&project-name=cfb-pure-merit)
+
+1. Click **Deploy with Vercel** (or import `lafebenn/cfb-pure-merit` in the Vercel dashboard).
+2. When prompted, paste your free `CFBD_API_KEY` from [collegefootballdata.com/key](https://collegefootballdata.com/key).
+3. Deploy. Fetch responses revalidate about every 12 hours.
+
+CLI (after `npx vercel login`):
+
+```bash
+npx vercel --prod
+npx vercel env add CFBD_API_KEY
+```
 
 ## Future: ML playoff projections
 
