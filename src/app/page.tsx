@@ -3,19 +3,61 @@ import RankingsTable from "@/components/RankingsTable";
 import { fetchSeasonData } from "@/lib/cfbd";
 import { calculateMeritRankings, topN } from "@/lib/meritFormula";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86400; // fallback daily; Sunday cron forces a fresh pull
 
 function formatUpdated(iso: string): string {
   try {
     return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: "America/New_York",
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "America/Denver",
+      timeZoneName: "short",
     }).format(new Date(iso));
   } catch {
     return iso;
   }
 }
+
+const FORMULA_BLOCKS = [
+  {
+    n: "01",
+    title: "Data scrub",
+    items: [
+      "Only FBS vs FBS games count (homeFbs & awayFbs)",
+      "FCS games discarded for W/L, PD, OW%, and OOW%",
+      "Opponent records are H2H-adjusted (remove the game vs you)",
+    ],
+  },
+  {
+    n: "02",
+    title: "Win value & road",
+    items: [
+      "Each FBS win: 0.55 + 0.90 × opponent’s adjusted win%",
+      "True road wins: +0.35 each, capped at +1.00 total",
+    ],
+  },
+  {
+    n: "03",
+    title: "Tiered losses (compounded)",
+    items: [
+      "Road vs adj >.660: −0.55 · Standard ≥.500: −0.75",
+      "Weak home: −1.10 · Weak road: −0.70",
+      "2+ losses: total loss hit × (1 + 0.45 × (losses − 1))",
+    ],
+  },
+  {
+    n: "04",
+    title: "Resume & control",
+    items: [
+      "Resume = 3.2 × (OW% + OOW%) from adjusted W/L% graph only",
+      "Game control = avg FBS margin ÷ 100, capped at +0.02 (near-ties)",
+    ],
+  },
+] as const;
 
 export default async function Home() {
   let error: string | null = null;
@@ -33,40 +75,36 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-        <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold">
-            {season} Season · Advanced Pure Merit
-          </p>
-          <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            CFB Pure Merit Rankings
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
-            A transparent Top 25 built from FBS wins, tiered losses, road and quality
-            bonuses, schedule strength, and capped game control — refreshed from live
-            CollegeFootballData.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-            <p className="text-zinc-300">
-              <span className="text-muted">Last updated</span>{" "}
-              <span className="font-medium text-white">{formatUpdated(fetchedAt)} ET</span>
+    <div className="min-h-screen bg-background bg-glow bg-no-repeat font-sans text-foreground">
+      <header className="mx-auto max-w-6xl px-5 pb-3 pt-6 sm:px-8 sm:pt-8">
+        <div className="animate-rise flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
+              {season} · Pure Merit · Sundays
             </p>
+            <h1 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">
+              CFB Pure Merit <span className="text-gold-gradient">Rankings</span>
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="hidden font-mono text-[10px] text-muted-foreground sm:inline">
+              {formatUpdated(fetchedAt)}
+            </span>
             <a
               href="#formula"
-              className="text-gold transition-colors hover:text-gold-bright"
+              className="group inline-flex items-center gap-1.5 border-b border-primary pb-0.5 text-xs font-semibold text-gold-bright transition-colors hover:text-foreground sm:text-sm"
             >
-              How the formula works →
+              Formula{" "}
+              <span className="transition-transform group-hover:translate-x-1">→</span>
             </a>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
+      <main className="mx-auto w-full max-w-6xl px-5 pb-24 sm:px-8">
         {error ? (
           <div
-            className="rounded-2xl border border-red-900/50 bg-red-950/40 px-5 py-6 text-sm text-red-100"
+            className="rounded-lg border border-red-900/50 bg-red-950/40 px-5 py-6 text-sm text-red-100"
             role="alert"
           >
             <p className="font-semibold">Could not load rankings</p>
@@ -75,65 +113,62 @@ export default async function Home() {
         ) : (
           <>
             <Podium teams={top25} />
-            <div className="mb-4 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">
+
+            <section className="mt-16">
+              <div className="mb-8">
+                <div className="rule-gold mb-6 opacity-60" />
+                <p className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
                   Full board
                 </p>
-                <h2 className="text-xl font-semibold text-white sm:text-2xl">Top 25</h2>
+                <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
+                  <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Top 25</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Select or hover a team to see the breakdown.
+                  </p>
+                </div>
               </div>
-              <p className="hidden text-xs text-muted sm:block">
-                Hover a row for the full breakdown
-              </p>
-            </div>
-            <RankingsTable teams={top25} />
+              <RankingsTable teams={top25} />
+            </section>
           </>
         )}
 
-        <section
-          id="formula"
-          className="mt-14 scroll-mt-8 rounded-2xl border border-border bg-surface/60 p-6 sm:p-8"
-        >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">
-            Methodology
+        <section id="formula" className="scroll-mt-10 pt-24">
+          <div className="mb-8">
+            <div className="rule-gold mb-6 opacity-60" />
+            <p className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
+              Methodology
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+              How the formula works
+            </h2>
+          </div>
+          <p className="max-w-3xl font-mono text-base text-muted-foreground sm:text-lg">
+            <span className="text-gold-bright">Total</span> = Win Value + Loss Penalties +
+            Road + Resume + Game Control
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">Advanced Pure Merit Formula</h2>
-          <p className="mt-2 font-mono text-sm text-gold-bright">
-            Total = Base + Difficulty + Schedule Strength + Game Control
-          </p>
-          <div className="mt-6 grid gap-6 text-sm leading-relaxed text-zinc-300 md:grid-cols-2">
-            <div>
-              <h3 className="mb-2 font-semibold text-white">1. Base value</h3>
-              <ul className="list-disc space-y-1 pl-5">
-                <li>+1.0 per FBS win (FCS wins = 0)</li>
-                <li>Road loss vs &gt;.660: −0.5</li>
-                <li>Standard loss vs ≥.500: −1.0</li>
-                <li>Loss vs &lt;.500: −2.0</li>
-                <li>Loss to FCS: −3.0</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="mb-2 font-semibold text-white">2. Difficulty modifiers</h3>
-              <ul className="list-disc space-y-1 pl-5">
-                <li>+0.5 per true road win (no neutral sites)</li>
-                <li>+1.0 per win vs opponent currently above .500</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="mb-2 font-semibold text-white">3. Schedule strength</h3>
-              <p>OW% + 0.5 × OOW% using current opponent win percentages.</p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-semibold text-white">4. Game control</h3>
-              <p>Average point differential ÷ 100, capped at +0.17.</p>
-            </div>
+          <div className="mt-10 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2">
+            {FORMULA_BLOCKS.map((block) => (
+              <div key={block.n} className="bg-background p-7">
+                <p className="font-mono text-xs text-primary">{block.n}</p>
+                <h3 className="mt-2 text-xl font-bold">{block.title}</h3>
+                <ul className="mt-4 space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  {block.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-border/80 py-8 text-center text-xs text-zinc-600">
-        Unofficial fan rankings. Not affiliated with the College Football Playoff or NCAA.
-        Data © CollegeFootballData contributors.
+      <footer className="border-t border-border py-10 text-center text-xs leading-relaxed text-muted-foreground">
+        <p className="mx-auto max-w-2xl px-5">
+          CFB Pure Merit Rankings is an unofficial fan analytics project. Not affiliated
+          with, endorsed by, or sponsored by the College Football Playoff or the NCAA.
+          Team logos are property of their respective schools. Data © CollegeFootballData
+          contributors. Rankings refresh from live CFBD data every Sunday.
+        </p>
       </footer>
     </div>
   );

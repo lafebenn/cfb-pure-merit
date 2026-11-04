@@ -1,7 +1,8 @@
 "use client";
 
-import { useId, useState } from "react";
-import type { TeamMeritResult } from "@/lib/meritFormula";
+import { Fragment, useId, useState } from "react";
+import TeamLogo from "@/components/TeamLogo";
+import { MERIT_CONSTANTS, type TeamMeritResult } from "@/lib/meritFormula";
 
 interface RankingsTableProps {
   teams: TeamMeritResult[];
@@ -11,126 +12,128 @@ function fmt(n: number, digits = 3): string {
   return n.toFixed(digits);
 }
 
-function TeamMark({ team, size = 36 }: { team: TeamMeritResult; size?: number }) {
-  if (team.logo) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={team.logo}
-        alt=""
-        width={size}
-        height={size}
-        className="object-contain"
-        style={{ width: size, height: size }}
-      />
-    );
-  }
-  return (
-    <span
-      className="inline-flex items-center justify-center rounded-full text-xs font-bold text-black"
-      style={{
-        width: size,
-        height: size,
-        background: team.color || "#c9a227",
-      }}
-    >
-      {team.school.slice(0, 2).toUpperCase()}
-    </span>
-  );
+function recordDisplay(label: string): string {
+  return label.replace(/-/g, "–");
 }
 
 function Breakdown({ team }: { team: TeamMeritResult }) {
   const lb = team.lossBreakdown;
+  const C = MERIT_CONSTANTS;
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-3">
       <div>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-gold">
-          Base & difficulty
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+          Wins & road
         </p>
-        <ul className="space-y-1 text-sm text-zinc-300">
-          <li>
-            FBS wins <span className="float-right font-mono text-white">{team.fbsWins}</span>
+        <ul className="space-y-1.5 text-sm text-muted-foreground">
+          <li className="flex justify-between gap-4">
+            <span>FBS wins</span>
+            <span className="font-mono text-foreground">{team.fbsWins}</span>
+          </li>
+          <li className="flex justify-between gap-4">
+            <span>Win value Σ</span>
+            <span className="font-mono text-foreground">{fmt(team.winValueSum)}</span>
           </li>
           {team.voidedFcsWins > 0 && (
-            <li>
-              FCS wins voided{" "}
-              <span className="float-right font-mono text-zinc-500">{team.voidedFcsWins}</span>
+            <li className="flex justify-between gap-4">
+              <span>FCS scrubbed</span>
+              <span className="font-mono">{team.voidedFcsWins}</span>
             </li>
           )}
-          <li>
-            Road wins{" "}
-            <span className="float-right font-mono text-white">
+          <li className="flex justify-between gap-4">
+            <span>Road wins</span>
+            <span className="font-mono text-foreground">
               {team.roadWins}{" "}
-              <span className="text-zinc-500">(+{fmt(team.roadPoints, 1)})</span>
+              <span className="text-muted-foreground">(+{fmt(team.roadPoints, 2)})</span>
             </span>
           </li>
-          <li>
-            Quality wins{" "}
-            <span className="float-right font-mono text-white">
-              {team.qualityWins}{" "}
-              <span className="text-zinc-500">(+{fmt(team.qualityWins, 1)})</span>
-            </span>
+          <li className="flex justify-between gap-4">
+            <span>Wins vs &gt;.500</span>
+            <span className="font-mono text-foreground">{team.qualityWins}</span>
           </li>
         </ul>
       </div>
       <div>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-gold">
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
           Loss penalties
         </p>
-        <ul className="space-y-1 text-sm text-zinc-300">
-          <li>
-            Road vs &gt;.660{" "}
-            <span className="float-right font-mono text-white">
+        <ul className="space-y-1.5 text-sm text-muted-foreground">
+          <li className="flex justify-between gap-4">
+            <span>Road vs &gt;.660</span>
+            <span className="font-mono text-foreground">
               {lb.roadStrong}
               {lb.roadStrong > 0 && (
-                <span className="text-zinc-500"> (−{fmt(lb.roadStrong * 0.5, 1)})</span>
+                <span className="text-muted-foreground">
+                  {" "}
+                  ({fmt(lb.roadStrong * C.LOSS_ROAD_STRONG, 2)})
+                </span>
               )}
             </span>
           </li>
-          <li>
-            Standard ≥.500{" "}
-            <span className="float-right font-mono text-white">
+          <li className="flex justify-between gap-4">
+            <span>Standard ≥.500</span>
+            <span className="font-mono text-foreground">
               {lb.standard}
               {lb.standard > 0 && (
-                <span className="text-zinc-500"> (−{fmt(lb.standard, 1)})</span>
+                <span className="text-muted-foreground">
+                  {" "}
+                  ({fmt(lb.standard * C.LOSS_STANDARD, 2)})
+                </span>
               )}
             </span>
           </li>
-          <li>
-            Weak &lt;.500{" "}
-            <span className="float-right font-mono text-white">
-              {lb.weak}
-              {lb.weak > 0 && <span className="text-zinc-500"> (−{fmt(lb.weak * 2, 1)})</span>}
+          <li className="flex justify-between gap-4">
+            <span>Weak home</span>
+            <span className="font-mono text-foreground">
+              {lb.weakHome}
+              {lb.weakHome > 0 && (
+                <span className="text-muted-foreground">
+                  {" "}
+                  ({fmt(lb.weakHome * C.LOSS_WEAK_HOME, 2)})
+                </span>
+              )}
             </span>
           </li>
-          <li>
-            FCS losses{" "}
-            <span className="float-right font-mono text-white">
-              {lb.fcs}
-              {lb.fcs > 0 && <span className="text-zinc-500"> (−{fmt(lb.fcs * 3, 1)})</span>}
+          <li className="flex justify-between gap-4">
+            <span>Weak road</span>
+            <span className="font-mono text-foreground">
+              {lb.weakRoad}
+              {lb.weakRoad > 0 && (
+                <span className="text-muted-foreground">
+                  {" "}
+                  ({fmt(lb.weakRoad * C.LOSS_WEAK_ROAD, 2)})
+                </span>
+              )}
             </span>
+          </li>
+          <li className="flex justify-between gap-4 border-t border-border pt-1.5">
+            <span>After compound ×{fmt(team.lossCompoundFactor, 2)}</span>
+            <span className="font-mono text-foreground">{fmt(team.lossPenalty, 2)}</span>
           </li>
         </ul>
       </div>
       <div>
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-gold">
-          Schedule & control
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+          Resume & control
         </p>
-        <ul className="space-y-1 text-sm text-zinc-300">
-          <li>
-            OW% <span className="float-right font-mono text-white">{fmt(team.owPct)}</span>
+        <ul className="space-y-1.5 text-sm text-muted-foreground">
+          <li className="flex justify-between gap-4">
+            <span>OW%</span>
+            <span className="font-mono text-foreground">{fmt(team.owPct)}</span>
           </li>
-          <li>
-            OOW% <span className="float-right font-mono text-white">{fmt(team.oowPct)}</span>
+          <li className="flex justify-between gap-4">
+            <span>OOW%</span>
+            <span className="font-mono text-foreground">{fmt(team.oowPct)}</span>
           </li>
-          <li>
-            SOS <span className="float-right font-mono text-white">{fmt(team.sosScore)}</span>
+          <li className="flex justify-between gap-4">
+            <span>Resume</span>
+            <span className="font-mono text-foreground">{fmt(team.sosScore)}</span>
           </li>
-          <li>
-            Avg margin{" "}
-            <span className="float-right font-mono text-white">
+          <li className="flex justify-between gap-4">
+            <span>Avg margin</span>
+            <span className="font-mono text-foreground">
               {team.avgPointDiff.toFixed(1)}{" "}
-              <span className="text-zinc-500">→ {fmt(team.gameControl)}</span>
+              <span className="text-muted-foreground">→ {fmt(team.gameControl)}</span>
             </span>
           </li>
         </ul>
@@ -144,95 +147,116 @@ export default function RankingsTable({ teams }: RankingsTableProps) {
   const labelId = useId();
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface/80 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] backdrop-blur-sm">
+    <div className="overflow-hidden rounded-lg border border-border">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[880px] border-collapse text-left" aria-labelledby={labelId}>
+        <table
+          className="w-full min-w-[860px] border-collapse text-sm"
+          aria-labelledby={labelId}
+        >
           <caption id={labelId} className="sr-only">
             Advanced Pure Merit Top {teams.length} rankings
           </caption>
           <thead>
-            <tr className="border-b border-border bg-black/50 text-[10px] font-semibold uppercase tracking-[0.14em] text-gold">
-              <th className="px-4 py-3.5 sm:px-5">Rank</th>
-              <th className="px-4 py-3.5 sm:px-5">Team</th>
-              <th className="px-4 py-3.5 sm:px-5">Record</th>
-              <th className="px-4 py-3.5 text-right sm:px-5">Merit</th>
-              <th className="hidden px-4 py-3.5 text-right sm:table-cell sm:px-5">Base</th>
-              <th className="hidden px-4 py-3.5 text-right md:table-cell md:px-5">Road</th>
-              <th className="hidden px-4 py-3.5 text-right md:table-cell md:px-5">&gt;.500</th>
-              <th className="hidden px-4 py-3.5 text-right lg:table-cell lg:px-5">SOS</th>
-              <th className="hidden px-4 py-3.5 text-right lg:table-cell lg:px-5">PD Cap</th>
+            <tr className="border-b border-border bg-muted">
+              {(
+                [
+                  ["Rank", "left"],
+                  ["Team", "left"],
+                  ["Record", "right"],
+                  ["Merit", "right"],
+                  ["Win Σ", "right"],
+                  ["Road", "right"],
+                  ["Resume", "right"],
+                  ["Loss", "right"],
+                  ["GC", "right"],
+                ] as const
+              ).map(([label, align]) => (
+                <th
+                  key={label}
+                  className={`px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-primary ${
+                    align === "right" ? "text-right" : "text-left"
+                  } ${label === "Team" ? "sticky left-0 z-10 bg-muted" : ""}`}
+                >
+                  {label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {teams.map((team) => {
               const open = activeId === team.teamId;
               return (
-                <tr
-                  key={team.teamId}
-                  className={`group border-b border-white/[0.04] transition-colors ${
-                    open ? "bg-gold/5" : "hover:bg-white/[0.03]"
-                  }`}
-                  onMouseEnter={() => setActiveId(team.teamId)}
-                  onMouseLeave={() => setActiveId(null)}
-                  onFocus={() => setActiveId(team.teamId)}
-                  onBlur={() => setActiveId(null)}
-                  tabIndex={0}
-                >
-                  <td colSpan={9} className="p-0">
-                    <div className="grid grid-cols-[3rem_minmax(0,1.4fr)_4.5rem_5rem] items-center gap-0 sm:grid-cols-[3.5rem_minmax(0,1.6fr)_4.5rem_5.5rem_4.5rem] md:grid-cols-[3.5rem_minmax(0,1.5fr)_4.5rem_5.5rem_4.5rem_4rem_4rem] lg:grid-cols-[3.5rem_minmax(0,1.4fr)_4.5rem_5.5rem_4.5rem_4rem_4rem_4.5rem_4.5rem]">
-                      <div
-                        className={`px-4 py-3.5 font-mono text-sm font-semibold sm:px-5 ${
-                          team.rank <= 4 ? "text-gold-bright" : "text-gold"
-                        }`}
-                      >
-                        {team.rank}
-                      </div>
-                      <div className="flex min-w-0 items-center gap-3 px-4 py-3.5 sm:px-5">
-                        <TeamMark team={team} />
-                        <div className="min-w-0">
-                          <p className="truncate font-semibold tracking-tight text-white">
-                            {team.school}
-                          </p>
+                <Fragment key={team.teamId}>
+                  <tr
+                    tabIndex={0}
+                    className={`group cursor-pointer border-b border-border outline-none transition-colors hover:bg-accent/60 ${
+                      open ? "bg-accent/60" : ""
+                    }`}
+                    onMouseEnter={() => setActiveId(team.teamId)}
+                    onMouseLeave={() => setActiveId(null)}
+                    onFocus={() => setActiveId(team.teamId)}
+                    onBlur={() => setActiveId(null)}
+                  >
+                    <td className="px-4 py-3 font-mono text-base font-semibold text-primary">
+                      {team.rank}
+                    </td>
+                    <td
+                      className={`sticky left-0 z-10 px-4 py-3 transition-colors ${
+                        open ? "bg-accent" : "bg-background group-hover:bg-accent"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <TeamLogo team={team} size={28} />
+                        <div>
+                          <div className="font-semibold">{team.school}</div>
                           {team.conference && (
-                            <p className="truncate text-xs text-muted">{team.conference}</p>
+                            <div className="text-xs text-muted-foreground">
+                              {team.conference}
+                            </div>
                           )}
                         </div>
                       </div>
-                      <div className="px-4 py-3.5 font-mono text-sm text-zinc-200 sm:px-5">
-                        {team.recordLabel}
-                      </div>
-                      <div className="px-4 py-3.5 text-right font-mono text-sm font-bold text-white sm:px-5">
-                        {fmt(team.meritScore)}
-                      </div>
-                      <div className="hidden px-4 py-3.5 text-right font-mono text-sm text-zinc-300 sm:block sm:px-5">
-                        {fmt(team.basePoints, 1)}
-                      </div>
-                      <div className="hidden px-4 py-3.5 text-right font-mono text-sm text-zinc-300 md:block md:px-5">
-                        +{fmt(team.roadPoints, 1)}
-                      </div>
-                      <div className="hidden px-4 py-3.5 text-right font-mono text-sm text-zinc-300 md:block md:px-5">
-                        {team.qualityWins}
-                      </div>
-                      <div className="hidden px-4 py-3.5 text-right font-mono text-sm text-zinc-300 lg:block lg:px-5">
-                        {fmt(team.sosScore)}
-                      </div>
-                      <div className="hidden px-4 py-3.5 text-right font-mono text-sm text-zinc-300 lg:block lg:px-5">
-                        +{fmt(team.gameControl)}
-                      </div>
-                    </div>
-                    <div
-                      className={`grid transition-[grid-template-rows] duration-200 ease-out ${
-                        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                      }`}
-                    >
-                      <div className="overflow-hidden">
-                        <div className="border-t border-border/60 bg-black/40 px-4 py-4 sm:px-5">
-                          <Breakdown team={team} />
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono">
+                      {recordDisplay(team.recordLabel)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-base font-semibold text-gold-bright">
+                      {fmt(team.meritScore)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono">
+                      {fmt(team.winValueSum)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono">
+                      +{fmt(team.roadPoints, 2)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono">{fmt(team.sosScore)}</td>
+                    <td className="px-4 py-3 text-right font-mono">
+                      {fmt(team.lossPenalty, 2)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono">
+                      +{fmt(team.gameControl)}
+                    </td>
+                  </tr>
+                  <tr
+                    className="border-b border-border"
+                    onMouseEnter={() => setActiveId(team.teamId)}
+                    onMouseLeave={() => setActiveId(null)}
+                  >
+                    <td colSpan={9} className="p-0">
+                      <div
+                        className={`grid transition-[grid-template-rows] duration-200 ease-out ${
+                          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                        }`}
+                      >
+                        <div className="min-h-0 overflow-hidden">
+                          <div className="bg-card/80 px-4 py-5 sm:px-6">
+                            <Breakdown team={team} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
+                </Fragment>
               );
             })}
           </tbody>

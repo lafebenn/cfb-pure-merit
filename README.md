@@ -6,8 +6,8 @@ Lightweight Next.js app that computes a custom Top 25 college football ranking f
 
 - Next.js (App Router, TypeScript)
 - Tailwind CSS
-- Server Components + `fetch` revalidation every 12 hours
 - CFBD API (Bearer token, server-side only)
+- Vercel Cron — refreshes rankings every **Sunday 18:00 UTC** (~11am MT)
 
 ## Setup
 
@@ -31,29 +31,33 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Formula (v1)
+## Formula (v2)
 
-`Total Score = Base Value + Difficulty Modifiers + Schedule Strength + Game Control`
+`Total = Win Value + Loss Penalties + Road + Resume + Game Control`
 
-1. **Base** — FBS wins only (FCS wins = 0). Tiered loss penalties by opponent win% and location (−0.5 / −1.0 / −2.0 / −3.0 FCS).
-2. **Difficulty** — +0.5 per true road win; +1.0 per quality win (opp win% > .500).
-3. **SOS** — `OW% + 0.5 × OOW%`.
-4. **Game control** — average point differential / 100, capped at +0.17.
+**Scrub first:** only games with both `homeFbs` and `awayFbs` true. FCS games discarded. Opponent strength uses H2H-adjusted records (remove the game vs the team being ranked). No conference or historic brand inputs.
+
+1. **Win value** — each FBS win: `0.55 + 0.90 × oppAdjustedWin%`
+2. **Losses (tiered, then compounded)** — road vs adj >.660: −0.55; standard ≥.500: −0.75; weak home: −1.10; weak road: −0.70. If 2+ losses: total × `(1 + 0.45 × (losses − 1))`
+3. **Road** — +0.35 per true road win, capped at +1.00
+4. **Resume** — `3.2 × (OW% + OOW%)`
+5. **Game control** — avg FBS margin / 100, capped at +0.02
 
 ## Deploy (Vercel)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/lafebenn/cfb-pure-merit&env=CFBD_API_KEY&envDescription=Free%20API%20key%20from%20collegefootballdata.com/key&project-name=cfb-pure-merit)
 
-1. Click **Deploy with Vercel** (or import `lafebenn/cfb-pure-merit` in the Vercel dashboard).
-2. When prompted, paste your free `CFBD_API_KEY` from [collegefootballdata.com/key](https://collegefootballdata.com/key).
-3. Deploy. Fetch responses revalidate about every 12 hours.
+1. Import `lafebenn/cfb-pure-merit` (or click Deploy).
+2. Set `CFBD_API_KEY`. Optionally set `CRON_SECRET` to protect `/api/refresh`.
+3. Deploy. `vercel.json` registers a Sunday cron that calls `/api/refresh` to bust the CFBD cache.
 
-CLI (after `npx vercel login`):
+CLI:
 
 ```bash
 npx vercel --prod
-npx vercel env add CFBD_API_KEY
 ```
+
+Manual refresh: `curl -H "Authorization: Bearer $CRON_SECRET" https://your-app.vercel.app/api/refresh`
 
 ## Future: ML playoff projections
 

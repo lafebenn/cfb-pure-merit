@@ -1,5 +1,8 @@
 const CFBD_BASE = "https://api.collegefootballdata.com";
-const REVALIDATE_SECONDS = 60 * 60 * 12; // 12 hours
+/** Cache tag busted by Sunday cron at /api/refresh. */
+export const CFBD_CACHE_TAG = "cfbd-season";
+/** Safety-net revalidate if cron misses (36h). */
+const REVALIDATE_SECONDS = 60 * 60 * 36;
 
 export type CfbdClassification = "fbs" | "fcs" | string;
 
@@ -27,9 +30,13 @@ export interface CfbdGame {
   homeId: number;
   homeTeam: string;
   homePoints: number | null;
+  /** True when the home side is an FBS program (CFBD). */
+  homeFbs?: boolean;
   awayId: number;
   awayTeam: string;
   awayPoints: number | null;
+  /** True when the away side is an FBS program (CFBD). */
+  awayFbs?: boolean;
 }
 
 export interface CfbdRecord {
@@ -80,7 +87,7 @@ async function cfbdFetch<T>(
       Authorization: `Bearer ${getApiKey()}`,
       Accept: "application/json",
     },
-    next: { revalidate: REVALIDATE_SECONDS },
+    next: { revalidate: REVALIDATE_SECONDS, tags: [CFBD_CACHE_TAG] },
   });
 
   if (!res.ok) {

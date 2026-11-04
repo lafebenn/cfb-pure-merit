@@ -1,10 +1,28 @@
-import type { CfbdGame, CfbdRecord, CfbdSeasonData, CfbdTeam } from "./cfbd";
+import type { CfbdSeasonData, CfbdTeam } from "./cfbd";
+
+/** Pure Merit v2 constants — tune in one place. */
+export const MERIT_CONSTANTS = {
+  WIN_VALUE_BASE: 0.55,
+  WIN_VALUE_SLOPE: 0.9,
+  LOSS_ROAD_STRONG: -0.55,
+  LOSS_STANDARD: -0.75,
+  LOSS_WEAK_HOME: -1.1,
+  LOSS_WEAK_ROAD: -0.7,
+  LOSS_COMPOUND_K: 0.45,
+  ROAD_WIN: 0.35,
+  ROAD_POINTS_CAP: 1.0,
+  RESUME_SCALE: 3.2,
+  RESUME_OOW_WEIGHT: 1.0,
+  GC_CAP: 0.02,
+} as const;
 
 export interface LossBreakdown {
-  roadStrong: number; // opp win% > .660 on the road → -0.5 each
-  standard: number; // opp win% >= .500 (not covered above) → -1.0 each
-  weak: number; // opp win% < .500 → -2.0 each
-  fcs: number; // loss to FCS → -3.0 each
+  roadStrong: number;
+  standard: number;
+  weakHome: number;
+  weakRoad: number;
+  /** @deprecated always 0 after FCS scrub */
+  fcs: number;
 }
 
 export interface TeamMeritResult {
@@ -14,48 +32,66 @@ export interface TeamMeritResult {
   logo: string | null;
   conference: string | null;
   color: string | null;
+  /** FBS-only W-L used by the formula (FCS games discarded). */
   wins: number;
   losses: number;
   ties: number;
   recordLabel: string;
   meritScore: number;
+  /** Sum of continuous win values (replaces flat +1 base). */
+  winValueSum: number;
+  /** @deprecated alias of winValueSum for older UI; prefer winValueSum */
   basePoints: number;
+  /** Informational count of wins vs adj opp > .500 */
   qualityWins: number;
   roadWins: number;
   roadPoints: number;
+  /** ResumeStrength = scale × (OW% + oowWeight × OOW%) */
   sosScore: number;
   owPct: number;
   oowPct: number;
   gameControl: number;
   avgPointDiff: number;
   lossBreakdown: LossBreakdown;
+  /** Sum of tier hits before compounding */
+  lossBaseSum: number;
+  /** Applied loss penalty after compounding */
+  lossPenalty: number;
+  /** 1 for 0–1 losses; 1 + k×(L−1) for L≥2 */
+  lossCompoundFactor: number;
   fbsWins: number;
+  /** FCS games discarded from the schedule (informational). */
   voidedFcsWins: number;
 }
 
-interface TeamContext {
+interface FbsGame {
+  homeId: number;
+  awayId: number;
+  homePoints: number;
+  awayPoints: number;
+  neutralSite: boolean;
+  week: number;
+  startDate: string;
+}
+
+interface TeamMeta {
   id: number;
   school: string;
-  classification: string | null;
   conference: string | null;
   logo: string | null;
   color: string | null;
-  /** Display record (from CFBD records when available). */
+}
+
+interface RecordTally {
   wins: number;
   losses: number;
   ties: number;
-  /** Win% from completed regular-season games in this dataset. */
-  winPct: number;
   opponentIds: number[];
-}
-
-function isFbsId(id: number, fbsIds: Set<number>): boolean {
-  return fbsIds.has(id);
 }
 
 function winPct(wins: number, losses: number, ties = 0): number {
   const games = wins + losses + ties;
-  if (games === 0) return 0;
+  if (games <= 0) return 0;
   return (wins + ties * 0.5) / games;
 }
 
@@ -66,201 +102,190 @@ function primaryLogo(team: CfbdTeam | undefined): string | null {
   return https ?? logos[0].replace(/^http:\/\//, "https://");
 }
 
-function buildTeamContexts(
-  teams: CfbdTeam[],
-  records: CfbdRecord[],
-  completedGames: CfbdGame[],
-  fbsIds: Set<number>,
-): Map<number, TeamContext> {
-  const byId = new Map<number, TeamContext>();
-
-  for (const team of teams) {
-    byId.set(team.id, {
-      id: team.id,
-      school: team.school,
-      classification: fbsIds.has(team.id) ? "fbs" : team.classification,
-      conference: team.conference,
-      logo: primaryLogo(team),
-      color: team.color ?? null,
-      wins: 0,
-      losses: 0,
-      ties: 0,
-      winPct: 0,
-      opponentIds: [],
-    });
-  }
-
-  // Ensure every game participant exists even if missing from /teams?year=
-  for (const game of completedGames) {
-    for (const [id, school] of [
-      [game.homeId, game.homeTeam] as const,
-      [game.awayId, game.awayTeam] as const,
-    ]) {
-      if (byId.has(id)) continue;
-      byId.set(id, {
-        id,
-        school,
-        classification: fbsIds.has(id) ? "fbs" : "fcs",
-        conference: null,
-        logo: null,
-        color: null,
-        wins: 0,
-        losses: 0,
-        ties: 0,
-        winPct: 0,
-        opponentIds: [],
-      });
-    }
-  }
-
-  // Display W-L from records
-  for (const rec of records) {
-    const ctx = byId.get(rec.teamId);
-    if (!ctx) continue;
-    ctx.wins = rec.total.wins;
-    ctx.losses = rec.total.losses;
-    ctx.ties = rec.total.ties;
-    if (rec.conference) ctx.conference = rec.conference;
-    if (fbsIds.has(rec.teamId)) ctx.classification = "fbs";
-    else if (rec.classification) ctx.classification = rec.classification;
-  }
-
-  // Game-derived win% + opponent lists (source of truth for formula math)
-  const tallies = new Map<number, { w: number; l: number; t: number }>();
-  const bump = (id: number) => {
-    if (!tallies.has(id)) tallies.set(id, { w: 0, l: 0, t: 0 });
-    return tallies.get(id)!;
-  };
-
-  for (const game of completedGames) {
-    const home = byId.get(game.homeId);
-    const away = byId.get(game.awayId);
-    if (home) home.opponentIds.push(game.awayId);
-    if (away) away.opponentIds.push(game.homeId);
-
-    const ht = bump(game.homeId);
-    const at = bump(game.awayId);
-    const hp = game.homePoints!;
-    const ap = game.awayPoints!;
-    if (hp > ap) {
-      ht.w += 1;
-      at.l += 1;
-    } else if (ap > hp) {
-      at.w += 1;
-      ht.l += 1;
-    } else {
-      ht.t += 1;
-      at.t += 1;
-    }
-  }
-
-  for (const ctx of byId.values()) {
-    const t = tallies.get(ctx.id);
-    if (t) {
-      ctx.winPct = winPct(t.w, t.l, t.t);
-      // If records were missing, fall back to game tally for display
-      if (ctx.wins === 0 && ctx.losses === 0 && ctx.ties === 0 && t.w + t.l + t.t > 0) {
-        ctx.wins = t.w;
-        ctx.losses = t.l;
-        ctx.ties = t.t;
-      }
-    }
-  }
-
-  return byId;
-}
-
-function lossPenalty(
-  opponent: TeamContext | undefined,
+function lossTier(
+  oppWinPct: number,
   isRoadLoss: boolean,
-  fbsIds: Set<number>,
 ): { points: number; bucket: keyof LossBreakdown } {
-  if (!opponent || !isFbsId(opponent.id, fbsIds)) {
-    return { points: -3.0, bucket: "fcs" };
+  const C = MERIT_CONSTANTS;
+  if (oppWinPct > 0.66 && isRoadLoss) {
+    return { points: C.LOSS_ROAD_STRONG, bucket: "roadStrong" };
   }
-
-  const pct = opponent.winPct;
-  if (pct > 0.66 && isRoadLoss) {
-    return { points: -0.5, bucket: "roadStrong" };
+  if (oppWinPct >= 0.5) {
+    return { points: C.LOSS_STANDARD, bucket: "standard" };
   }
-  if (pct >= 0.5) {
-    return { points: -1.0, bucket: "standard" };
+  if (isRoadLoss) {
+    return { points: C.LOSS_WEAK_ROAD, bucket: "weakRoad" };
   }
-  return { points: -2.0, bucket: "weak" };
+  return { points: C.LOSS_WEAK_HOME, bucket: "weakHome" };
 }
 
-function averageWinPct(ids: number[], byId: Map<number, TeamContext>): number {
-  if (ids.length === 0) return 0;
-  let sum = 0;
-  for (const id of ids) {
-    sum += byId.get(id)?.winPct ?? 0;
+/**
+ * Team B's FBS record with the A↔B game removed.
+ * - A beat B → subtract 1 loss from B
+ * - A lost to B → subtract 1 win from B
+ * - Tie → subtract 1 tie from B
+ */
+function adjustedOppRecord(
+  oppTally: RecordTally,
+  teamBeatOpp: boolean,
+  teamLostToOpp: boolean,
+): { wins: number; losses: number; ties: number; winPct: number } {
+  let { wins, losses, ties } = oppTally;
+  if (teamBeatOpp) {
+    losses = Math.max(0, losses - 1);
+  } else if (teamLostToOpp) {
+    wins = Math.max(0, wins - 1);
+  } else {
+    ties = Math.max(0, ties - 1);
   }
-  return sum / ids.length;
+  return { wins, losses, ties, winPct: winPct(wins, losses, ties) };
 }
 
-/** OOW%: average of each opponent's opponents' win%, excluding the original team. */
-function computeOowPct(
-  teamId: number,
-  opponentIds: number[],
-  byId: Map<number, TeamContext>,
-): number {
-  if (opponentIds.length === 0) return 0;
-  let sum = 0;
-  for (const oppId of opponentIds) {
-    const opp = byId.get(oppId);
-    if (!opp) {
-      sum += 0;
-      continue;
-    }
-    const filtered = opp.opponentIds.filter((id) => id !== teamId);
-    sum += averageWinPct(filtered, byId);
-  }
-  return sum / opponentIds.length;
+function compoundLossFactor(lossCount: number): number {
+  if (lossCount <= 1) return 1;
+  return 1 + MERIT_CONSTANTS.LOSS_COMPOUND_K * (lossCount - 1);
 }
 
 export function calculateMeritRankings(data: CfbdSeasonData): TeamMeritResult[] {
+  const C = MERIT_CONSTANTS;
   const fbsIds = new Set(data.fbsTeamIds);
-  const completed = data.games.filter(
-    (g) =>
-      g.completed &&
-      g.homePoints !== null &&
-      g.awayPoints !== null &&
-      (g.seasonType === "regular" || !g.seasonType),
-  );
 
-  const byId = buildTeamContexts(data.teams, data.records, completed, fbsIds);
+  // Step 1: FBS vs FBS only
+  const fbsGames: FbsGame[] = [];
+  for (const g of data.games) {
+    if (!g.completed || g.homePoints === null || g.awayPoints === null) continue;
+    if (g.seasonType && g.seasonType !== "regular") continue;
+
+    const homeFbs = g.homeFbs ?? fbsIds.has(g.homeId);
+    const awayFbs = g.awayFbs ?? fbsIds.has(g.awayId);
+    if (!homeFbs || !awayFbs) continue;
+
+    fbsGames.push({
+      homeId: g.homeId,
+      awayId: g.awayId,
+      homePoints: g.homePoints,
+      awayPoints: g.awayPoints,
+      neutralSite: g.neutralSite,
+      week: g.week,
+      startDate: g.startDate,
+    });
+  }
+
+  const meta = new Map<number, TeamMeta>();
+  for (const team of data.teams) {
+    if (!fbsIds.has(team.id)) continue;
+    meta.set(team.id, {
+      id: team.id,
+      school: team.school,
+      conference: team.conference,
+      logo: primaryLogo(team),
+      color: team.color ?? null,
+    });
+  }
+  for (const g of data.games) {
+    for (const [id, school] of [
+      [g.homeId, g.homeTeam] as const,
+      [g.awayId, g.awayTeam] as const,
+    ]) {
+      if (!fbsIds.has(id) || meta.has(id)) continue;
+      meta.set(id, { id, school, conference: null, logo: null, color: null });
+    }
+  }
+  for (const rec of data.records) {
+    if (!fbsIds.has(rec.teamId)) continue;
+    const m = meta.get(rec.teamId);
+    if (m && rec.conference) m.conference = rec.conference;
+  }
+
+  const tallies = new Map<number, RecordTally>();
+  const ensure = (id: number) => {
+    if (!tallies.has(id)) {
+      tallies.set(id, { wins: 0, losses: 0, ties: 0, opponentIds: [] });
+    }
+    return tallies.get(id)!;
+  };
+  for (const id of fbsIds) ensure(id);
+
+  for (const g of fbsGames) {
+    const home = ensure(g.homeId);
+    const away = ensure(g.awayId);
+    home.opponentIds.push(g.awayId);
+    away.opponentIds.push(g.homeId);
+    if (g.homePoints > g.awayPoints) {
+      home.wins += 1;
+      away.losses += 1;
+    } else if (g.awayPoints > g.homePoints) {
+      away.wins += 1;
+      home.losses += 1;
+    } else {
+      home.ties += 1;
+      away.ties += 1;
+    }
+  }
+
+  const globalWinPct = new Map<number, number>();
+  for (const [id, t] of tallies) {
+    globalWinPct.set(id, winPct(t.wins, t.losses, t.ties));
+  }
+
+  const fcsWinsDiscarded = new Map<number, number>();
+  for (const g of data.games) {
+    if (!g.completed || g.homePoints === null || g.awayPoints === null) continue;
+    if (g.seasonType && g.seasonType !== "regular") continue;
+    const homeFbs = g.homeFbs ?? fbsIds.has(g.homeId);
+    const awayFbs = g.awayFbs ?? fbsIds.has(g.awayId);
+    if (homeFbs === awayFbs) continue;
+    if (homeFbs && g.homePoints > g.awayPoints) {
+      fcsWinsDiscarded.set(g.homeId, (fcsWinsDiscarded.get(g.homeId) ?? 0) + 1);
+    }
+    if (awayFbs && g.awayPoints > g.homePoints) {
+      fcsWinsDiscarded.set(g.awayId, (fcsWinsDiscarded.get(g.awayId) ?? 0) + 1);
+    }
+  }
+
   const results: Omit<TeamMeritResult, "rank">[] = [];
 
   for (const teamId of fbsIds) {
-    const team = byId.get(teamId);
-    if (!team) continue;
+    const teamMeta = meta.get(teamId);
+    const teamTally = tallies.get(teamId);
+    if (!teamMeta || !teamTally) continue;
 
     const lossBreakdown: LossBreakdown = {
       roadStrong: 0,
       standard: 0,
-      weak: 0,
+      weakHome: 0,
+      weakRoad: 0,
       fcs: 0,
     };
 
     let fbsWins = 0;
-    let voidedFcsWins = 0;
     let roadWins = 0;
     let qualityWins = 0;
+    let winValueSum = 0;
     let pointsFor = 0;
     let pointsAgainst = 0;
     let gamesPlayed = 0;
-    let lossPenaltyTotal = 0;
+    let lossBaseSum = 0;
+    let lossCount = 0;
+    let owSum = 0;
+    let owCount = 0;
+    let oowSum = 0;
+    let oowCount = 0;
 
-    for (const game of completed) {
-      const isHome = game.homeId === team.id;
-      const isAway = game.awayId === team.id;
-      if (!isHome && !isAway) continue;
+    const teamGames = fbsGames
+      .filter((g) => g.homeId === teamId || g.awayId === teamId)
+      .sort(
+        (a, b) =>
+          a.week - b.week || a.startDate.localeCompare(b.startDate),
+      );
 
-      const teamPoints = isHome ? game.homePoints! : game.awayPoints!;
-      const oppPoints = isHome ? game.awayPoints! : game.homePoints!;
-      const oppId = isHome ? game.awayId : game.homeId;
-      const opponent = byId.get(oppId);
-      const oppIsFbs = isFbsId(oppId, fbsIds);
+    for (const g of teamGames) {
+      const isHome = g.homeId === teamId;
+      const teamPoints = isHome ? g.homePoints : g.awayPoints;
+      const oppPoints = isHome ? g.awayPoints : g.homePoints;
+      const oppId = isHome ? g.awayId : g.homeId;
+      const oppTally = tallies.get(oppId);
+      if (!oppTally) continue;
 
       pointsFor += teamPoints;
       pointsAgainst += oppPoints;
@@ -268,56 +293,59 @@ export function calculateMeritRankings(data: CfbdSeasonData): TeamMeritResult[] 
 
       const won = teamPoints > oppPoints;
       const lost = teamPoints < oppPoints;
-      const isRoad = isAway && !game.neutralSite;
+      const isRoad = !isHome && !g.neutralSite;
+      const adj = adjustedOppRecord(oppTally, won, lost);
+
+      owSum += adj.winPct;
+      owCount += 1;
+
+      const oppOpponents = oppTally.opponentIds.filter((id) => id !== teamId);
+      if (oppOpponents.length > 0) {
+        let s = 0;
+        for (const oid of oppOpponents) s += globalWinPct.get(oid) ?? 0;
+        oowSum += s / oppOpponents.length;
+        oowCount += 1;
+      }
 
       if (won) {
-        if (oppIsFbs) {
-          fbsWins += 1;
-        } else {
-          voidedFcsWins += 1;
-        }
-        // True road wins only (neutral excluded), any opponent
-        if (isRoad) {
-          roadWins += 1;
-        }
-        // Quality wins: opponent currently above .500
-        if (opponent && opponent.winPct > 0.5) {
-          qualityWins += 1;
-        }
+        fbsWins += 1;
+        winValueSum += C.WIN_VALUE_BASE + C.WIN_VALUE_SLOPE * adj.winPct;
+        if (isRoad) roadWins += 1;
+        if (adj.winPct > 0.5) qualityWins += 1;
       } else if (lost) {
-        const { points, bucket } = lossPenalty(opponent, isRoad, fbsIds);
-        lossPenaltyTotal += points;
+        const { points, bucket } = lossTier(adj.winPct, isRoad);
+        lossBaseSum += points;
+        lossCount += 1;
         lossBreakdown[bucket] += 1;
       }
     }
 
-    const basePoints = fbsWins + lossPenaltyTotal;
-    const roadPoints = roadWins * 0.5;
-
-    const owPct = averageWinPct(team.opponentIds, byId);
-    const oowPct = computeOowPct(team.id, team.opponentIds, byId);
-    const sosScore = owPct + oowPct * 0.5;
+    const lossCompoundFactor = compoundLossFactor(lossCount);
+    const lossPenalty = lossBaseSum * lossCompoundFactor;
+    const roadPoints = Math.min(roadWins * C.ROAD_WIN, C.ROAD_POINTS_CAP);
+    const owPct = owCount > 0 ? owSum / owCount : 0;
+    const oowPct = oowCount > 0 ? oowSum / oowCount : 0;
+    const sosScore = C.RESUME_SCALE * (owPct + C.RESUME_OOW_WEIGHT * oowPct);
 
     const avgPointDiff = gamesPlayed > 0 ? (pointsFor - pointsAgainst) / gamesPlayed : 0;
-    const gameControl = Math.min(avgPointDiff / 100, 0.17);
+    const gameControl = Math.min(Math.max(avgPointDiff, 0) / 100, C.GC_CAP);
 
-    const meritScore = basePoints + roadPoints + qualityWins * 1.0 + sosScore + gameControl;
+    const meritScore = winValueSum + lossPenalty + roadPoints + sosScore + gameControl;
+    const { wins, losses, ties } = teamTally;
 
     results.push({
-      teamId: team.id,
-      school: team.school,
-      logo: team.logo,
-      conference: team.conference,
-      color: team.color,
-      wins: team.wins,
-      losses: team.losses,
-      ties: team.ties,
-      recordLabel:
-        team.ties > 0
-          ? `${team.wins}-${team.losses}-${team.ties}`
-          : `${team.wins}-${team.losses}`,
+      teamId,
+      school: teamMeta.school,
+      logo: teamMeta.logo,
+      conference: teamMeta.conference,
+      color: teamMeta.color,
+      wins,
+      losses,
+      ties,
+      recordLabel: ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`,
       meritScore,
-      basePoints,
+      winValueSum,
+      basePoints: winValueSum,
       qualityWins,
       roadWins,
       roadPoints,
@@ -327,8 +355,11 @@ export function calculateMeritRankings(data: CfbdSeasonData): TeamMeritResult[] 
       gameControl,
       avgPointDiff,
       lossBreakdown,
+      lossBaseSum,
+      lossPenalty,
+      lossCompoundFactor,
       fbsWins,
-      voidedFcsWins,
+      voidedFcsWins: fcsWinsDiscarded.get(teamId) ?? 0,
     });
   }
 
