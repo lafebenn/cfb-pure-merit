@@ -1,0 +1,115 @@
+{
+  "by_season": {
+    "2024": {
+      "weeks": 6,
+      "spearman_top25": 0.9333333333333332,
+      "top12_overlap": 10.666666666666666,
+      "top4_overlap": 3.1666666666666665,
+      "final_week_top12_overlap": 11.0,
+      "per_week": [
+        {
+          "season": 2024,
+          "week": 11,
+          "spearman_top25": 0.9199999999999999,
+          "top12_overlap": 11,
+          "top4_overlap": 3
+        },
+        {
+          "season": 2024,
+          "week": 12,
+          "spearman_top25": 0.95,
+          "top12_overlap": 11,
+          "top4_overlap": 3
+        },
+        {
+          "season": 2024,
+          "week": 13,
+          "spearman_top25": 0.9384615384615383,
+          "top12_overlap": 10,
+          "top4_overlap": 3
+        },
+        {
+          "season": 2024,
+          "week": 14,
+          "spearman_top25": 0.9076923076923077,
+          "top12_overlap": 10,
+          "top4_overlap": 3
+        },
+        {
+          "season": 2024,
+          "week": 15,
+          "spearman_top25": 0.943076923076923,
+          "top12_overlap": 11,
+          "top4_overlap": 4
+        },
+        {
+          "season": 2024,
+          "week": 16,
+          "spearman_top25": 0.9407692307692307,
+          "top12_overlap": 11,
+          "top4_overlap": 3
+        }
+      ]
+    },
+    "2025": {
+      "weeks": 6,
+      "spearman_top25": 0.9215384615384613,
+      "top12_overlap": 10.833333333333334,
+      "top4_overlap": 3.5,
+      "final_week_top12_overlap": 12.0,
+      "per_week": [
+        {
+          "season": 2025,
+          "week": 11,
+          "spearman_top25": 0.8723076923076923,
+          "top12_overlap": 9,
+          "top4_overlap": 4
+        },
+        {
+          "season": 2025,
+          "week": 12,
+          "spearman_top25": 0.9023076923076924,
+          "top12_overlap": 10,
+          "top4_overlap": 4
+        },
+        {
+          "season": 2025,
+          "week": 13,
+          "spearman_top25": 0.9276923076923077,
+          "top12_overlap": 11,
+          "top4_overlap": 4
+        },
+        {
+          "season": 2025,
+          "week": 14,
+          "spearman_top25": 0.9469230769230769,
+          "top12_overlap": 11,
+          "top4_overlap": 3
+        },
+        {
+          "season": 2025,
+          "week": 15,
+          "spearman_top25": 0.9323076923076923,
+          "top12_overlap": 12,
+          "top4_overlap": 3
+        },
+        {
+          "season": 2025,
+          "week": 16,
+          "spearman_top25": 0.9476923076923076,
+          "top12_overlap": 12,
+          "top4_overlap": 3
+        }
+      ]
+    }
+  },
+  "pooled": {
+    "spearman_top25": 0.9274358974358973,
+    "top12_overlap": 10.75,
+    "top4_overlap": 3.333333333333333,
+    "final_week_top12_overlap": 11.5
+  },
+  "ship_gate": {
+    "top12_overlap_ge_10": true
+  }
+}
