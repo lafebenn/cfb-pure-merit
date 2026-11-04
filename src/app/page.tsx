@@ -1,7 +1,9 @@
-import Podium from "@/components/Podium";
+import Podium, { type ChampOdds } from "@/components/Podium";
+import PredictionsPanel from "@/components/predictions/PredictionsPanel";
 import RankingsTable from "@/components/RankingsTable";
-import { fetchSeasonData } from "@/lib/cfbd";
+import { currentCfbdSeason, fetchSeasonData } from "@/lib/cfbd";
 import { calculateMeritRankings, topN } from "@/lib/meritFormula";
+import { loadPredictions, type Predictions } from "@/lib/predictions";
 
 export const revalidate = 86400; // fallback daily; Sunday cron forces a fresh pull
 
@@ -59,20 +61,76 @@ const FORMULA_BLOCKS = [
   },
 ] as const;
 
+const PREDICTION_BLOCKS = [
+  {
+    n: "A",
+    title: "Game model",
+    items: [
+      "LightGBM predicts each FBS game's margin; isotonic calibration turns it into a win %",
+      "Inputs as of kickoff only: opponent-adjusted EPA & success rate, Elo, last year's SP+, the closing line when one exists",
+      "Coach résumé (career win %, years at school, wins over expectation) and roster experience (returning production, QB back, upperclass & transfer usage)",
+      "No conference or brand inputs",
+    ],
+  },
+  {
+    n: "B",
+    title: "Committee emulator",
+    items: [
+      "LambdaRank trained on every CFP committee ranking since 2014",
+      "Sees the Pure Merit résumé plus conference and program brand, because the real committee does",
+      "Backtest on 2024–25: 10.75 of the committee's top 12 matched each week",
+    ],
+  },
+  {
+    n: "C",
+    title: "Season simulator",
+    items: [
+      "10,000 runs of the remaining schedule, then conference title games (top two in the standings)",
+      "Real CFP: 5 highest-ranked champs + 7 at-large, top 4 get byes, 5–8 host round one",
+      "Pure Merit: top 12 of this board, seeded straight, so you can see what the formula would pick",
+    ],
+  },
+  {
+    n: "D",
+    title: "Honest scoreboard",
+    items: [
+      "Trained on 2014–21, tuned on 2022–23, tested on 2024–25 seasons it never saw",
+      "With lines: Brier 0.179 vs Vegas 0.179 and Elo 0.190. It matches the market rather than beating it",
+      "NIL era is noisier: SP+ year-over-year correlation fell from 0.83 to 0.76, so recent seasons are weighted more",
+    ],
+  },
+] as const;
+
+function champOddsFor(p: Predictions | null, teamId: number | undefined): ChampOdds | null {
+  if (!p || teamId === undefined) return null;
+  const real = p.titleOdds.real.find((t) => t.teamId === teamId);
+  const merit = p.titleOdds.merit.find((t) => t.teamId === teamId);
+  if (!real) return null;
+  return { real: real.champion, merit: merit?.champion ?? 0, playoff: real.playoff };
+}
+
 export default async function Home() {
   let error: string | null = null;
-  let season = new Date().getFullYear();
+  let season = currentCfbdSeason();
   let fetchedAt = new Date().toISOString();
   let top25 = [] as ReturnType<typeof topN>;
 
-  try {
-    const data = await fetchSeasonData();
-    season = data.season;
-    fetchedAt = data.fetchedAt;
-    top25 = topN(calculateMeritRankings(data), 25);
-  } catch (err) {
+  const [seasonResult, predictions] = await Promise.all([
+    fetchSeasonData().then(
+      (data) => ({ ok: true as const, data }),
+      (err: unknown) => ({ ok: false as const, err }),
+    ),
+    loadPredictions(season),
+  ]);
+  if (seasonResult.ok) {
+    season = seasonResult.data.season;
+    fetchedAt = seasonResult.data.fetchedAt;
+    top25 = topN(calculateMeritRankings(seasonResult.data), 25);
+  } else {
+    const err = seasonResult.err;
     error = err instanceof Error ? err.message : "Failed to load rankings.";
   }
+  const champOdds = champOddsFor(predictions, top25[0]?.teamId);
 
   return (
     <div className="min-h-screen bg-background bg-glow bg-no-repeat font-sans text-foreground">
@@ -112,7 +170,8 @@ export default async function Home() {
           </div>
         ) : (
           <>
-            <Podium teams={top25} />
+            <Podium teams={top25} champOdds={champOdds} />
+            {predictions && <PredictionsPanel predictions={predictions} />}
 
             <section className="mt-16">
               <div className="mb-8">
@@ -160,6 +219,36 @@ export default async function Home() {
             ))}
           </div>
         </section>
+
+        <section id="predictions-method" className="scroll-mt-10 pt-20">
+          <div className="mb-8">
+            <div className="rule-gold mb-6 opacity-60" />
+            <p className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
+              Predictions
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+              How the predictions work
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+              The rankings above are pure résumé. The predictions are a separate layer: they
+              forecast what happens next, and they can only use information available
+              before each game kicks off.
+            </p>
+          </div>
+          <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2">
+            {PREDICTION_BLOCKS.map((block) => (
+              <div key={block.n} className="bg-background p-7">
+                <p className="font-mono text-xs text-primary">{block.n}</p>
+                <h3 className="mt-2 text-xl font-bold">{block.title}</h3>
+                <ul className="mt-4 space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  {block.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
 
       <footer className="border-t border-border py-10 text-center text-xs leading-relaxed text-muted-foreground">
@@ -167,7 +256,8 @@ export default async function Home() {
           CFB Pure Merit Rankings is an unofficial fan analytics project. Not affiliated
           with, endorsed by, or sponsored by the College Football Playoff or the NCAA.
           Team logos are property of their respective schools. Data © CollegeFootballData
-          contributors. Rankings refresh from live CFBD data every Sunday.
+          contributors. Rankings and predictions refresh from live CFBD data every Sunday.
+          Predictions are for entertainment, not betting advice.
         </p>
       </footer>
     </div>

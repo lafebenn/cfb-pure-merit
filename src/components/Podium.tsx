@@ -1,4 +1,5 @@
 import TeamLogo from "@/components/TeamLogo";
+import { pct } from "@/components/predictions/format";
 import type { TeamMeritResult } from "@/lib/meritFormula";
 
 function recordDisplay(label: string): string {
@@ -57,7 +58,19 @@ function SeedChip({ team }: { team: TeamMeritResult }) {
   );
 }
 
-export default function Podium({ teams }: { teams: TeamMeritResult[] }) {
+export interface ChampOdds {
+  real: number;
+  merit: number;
+  playoff: number;
+}
+
+export default function Podium({
+  teams,
+  champOdds = null,
+}: {
+  teams: TeamMeritResult[];
+  champOdds?: ChampOdds | null;
+}) {
   const [champ, ...rest] = teams.slice(0, 4);
   if (!champ) return null;
   const contenders = rest.slice(0, 3);
@@ -120,15 +133,39 @@ export default function Podium({ teams }: { teams: TeamMeritResult[] }) {
             </div>
           </div>
 
-          {/* Future ML slot */}
-          <div className="w-full shrink-0 rounded-lg border border-dashed border-border/80 bg-background/40 px-4 py-3 sm:max-w-[220px]">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/80">
-              Soon · ML layer
-            </p>
-            <p className="mt-1 text-sm leading-snug text-muted-foreground">
-              Upset alerts, title odds &amp; dark-horse picks once the pipelines land.
-            </p>
-          </div>
+          {champOdds ? (
+            <dl className="grid w-full shrink-0 grid-cols-2 gap-x-5 gap-y-3 rounded-lg border border-border/80 bg-background/40 px-4 py-3 sm:max-w-[240px]">
+              <div className="col-span-2">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/80">
+                  Title odds · real CFP
+                </dt>
+                <dd className="font-mono text-3xl font-semibold text-gold-bright">
+                  {pct(champOdds.real, 1)}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Pure Merit
+                </dt>
+                <dd className="font-mono text-base font-semibold">{pct(champOdds.merit, 1)}</dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Playoff
+                </dt>
+                <dd className="font-mono text-base font-semibold">{pct(champOdds.playoff)}</dd>
+              </div>
+            </dl>
+          ) : (
+            <div className="w-full shrink-0 rounded-lg border border-dashed border-border/80 bg-background/40 px-4 py-3 sm:max-w-[220px]">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/80">
+                Predictions
+              </p>
+              <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                Title odds, upset alerts &amp; dark-horse picks refresh every Sunday.
+              </p>
+            </div>
+          )}
         </div>
       </article>
 
