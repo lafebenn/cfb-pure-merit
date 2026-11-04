@@ -1,0 +1,125 @@
+const CFBD_BASE = "https://api.collegefootballdata.com";
+const REVALIDATE_SECONDS = 60 * 60 * 12; // 12 hours
+
+export type CfbdClassification = "fbs" | "fcs" | string;
+
+export interface CfbdTeam {
+  id: number;
+  school: string;
+  mascot: string | null;
+  abbreviation: string | null;
+  conference: string | null;
+  classification: CfbdClassification | null;
+  logos: string[] | null;
+}
+
+export interface CfbdGame {
+  id: number;
+  season: number;
+  week: number;
+  seasonType: string;
+  startDate: string;
+  completed: boolean;
+  neutralSite: boolean;
+  conferenceGame: boolean;
+  homeId: number;
+  homeTeam: string;
+  homePoints: number | null;
+  awayId: number;
+  awayTeam: string;
+  awayPoints: number | null;
+}
+
+export interface CfbdRecord {
+  year: number;
+  teamId: number;
+  team: string;
+  conference: string | null;
+  division: string | null;
+  classification: CfbdClassification | null;
+  total: {
+    games: number;
+    wins: number;
+    losses: number;
+    ties: number;
+  };
+}
+
+function getApiKey(): string {
+  const key = process.env.CFBD_API_KEY;
+  if (!key) {
+    throw new Error(
+      "Missing CFBD_API_KEY. Copy .env.example to .env.local and add your key from collegefootballdata.com.",
+    );
+  }
+  return key;
+}
+
+async function cfbdFetch<T>(path: string, params: Record<string, string | number>): Promise<T> {
+  const url = new URL(`${CFBD_BASE}${path}`);
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, String(value));
+  }
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      Authorization: `Bearer ${getApiKey()}`,
+      Accept: "application/json",
+    },
+    next: { revalidate: REVALIDATE_SECONDS },
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`CFBD ${path} failed (${res.status}): ${body || res.statusText}`);
+  }
+
+  return res.json() as Promise<T>;
+}
+
+/** Current calendar year if after July, else previous year (CFB season spans fall). */
+export function currentCfbdSeason(now = new Date()): number {
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0-indexed
+  return month >= 6 ? year : year - 1;
+}
+
+export async function fetchTeams(): Promise<CfbdTeam[]> {
+  return cfbdFetch<CfbdTeam[]>("/teams", {});
+}
+
+export async function fetchGames(year: number): Promise<CfbdGame[]> {
+  return cfbdFetch<CfbdGame[]>("/games", {
+    year,
+    seasonType: "regular",
+  });
+}
+
+export async function fetchRecords(year: number): Promise<CfbdRecord[]> {
+  return cfbdFetch<CfbdRecord[]>("/records", { year });
+}
+
+export interface CfbdSeasonData {
+  season: number;
+  fetchedAt: string;
+  teams: CfbdTeam[];
+  games: CfbdGame[];
+  records: CfbdRecord[];
+}
+
+export async function fetchSeasonData(season?: number): Promise<CfbdSeasonData> {
+  const year = season ?? currentCfbdSeason();
+  const [teams, games, records] = await Promise.all([
+    fetchTeams(),
+    fetchGames(year),
+    fetchRecords(year),
+  ]);
+
+  return {
+    season: year,
+    fetchedAt: new Date().toISOString(),
+    teams,
+    games,
+    records,
+  };
+}

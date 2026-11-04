@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CFB Pure Merit Rankings
 
-## Getting Started
+Lightweight Next.js app that computes a custom Top 25 college football ranking from an **Advanced Pure Merit Formula**, using live weekly data from the [CollegeFootballData](https://collegefootballdata.com/) (CFBD) API.
 
-First, run the development server:
+## Stack
+
+- Next.js (App Router, TypeScript)
+- Tailwind CSS
+- Server Components + `fetch` revalidation every 12 hours
+- CFBD API (Bearer token, server-side only)
+
+## Setup
+
+1. Clone the repo and install:
+
+```bash
+npm install
+```
+
+2. Copy env and add your free CFBD key from [collegefootballdata.com/key](https://collegefootballdata.com/key):
+
+```bash
+cp .env.example .env.local
+```
+
+3. Run locally:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Formula (v1)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`Total Score = Base Value + Difficulty Modifiers + Schedule Strength + Game Control`
 
-## Learn More
+1. **Base** — FBS wins only (FCS wins = 0). Tiered loss penalties by opponent win% and location (−0.5 / −1.0 / −2.0 / −3.0 FCS).
+2. **Difficulty** — +0.5 per true road win; +1.0 per quality win (opp win% > .500).
+3. **SOS** — `OW% + 0.5 × OOW%`.
+4. **Game control** — average point differential / 100, capped at +0.17.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy (Vercel)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push this repo to GitHub.
+2. Import the project in [Vercel](https://vercel.com).
+3. Set `CFBD_API_KEY` in Project → Settings → Environment Variables.
+4. Deploy. Revalidation keeps rankings fresh about every 12 hours.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Future: ML playoff projections
 
-## Deploy on Vercel
+Out of scope for v1. Planned later:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Predict weekly W/L and season outcomes
+- Playoff qualification odds
+- Counterfactuals: how odds shift given a win or loss in a given week
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Disclaimer
+
+Unofficial fan rankings. Not affiliated with the College Football Playoff, NCAA, or CFBD beyond use of their public API.
